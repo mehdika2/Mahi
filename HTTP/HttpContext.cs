@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mahi
 {
-    public class HttpContext
+    public class HttpContext : IDisposable
     {
         public HttpRequest Request { get; internal set; }
         public HttpResponse Response { get; set; } = new HttpResponse();
@@ -104,6 +104,11 @@ namespace Mahi
                 // Return the byte array
                 return memoryStream.ToArray();
             }
+        }
+
+        public void Dispose()
+        {
+            Close();
         }
     }
 }

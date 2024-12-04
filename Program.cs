@@ -3,98 +3,85 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Mahi;
 
 class Program
 {
-    const string ip = "0.0.0.0";
-    const int port = 1010;
+	const string ip = "0.0.0.0";
+	const int port = 1010;
 
-    static void Main()
-    {
-        //var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", "$R%T4r5t");
-        var server = new HttpServer(IPAddress.Parse(ip), port);
-        server.Start();
+	static void Main()
+	{
+		new UnitTest().htmlTemplate();
+		return;
 
-        Console.WriteLine("Server started");
+		ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+		Console.Title = "Mahi 1.0.0";
 
-        while (true)
-        {
-            var context = server.GetContext();
-            var request = context.Request;
-            var response = context.Response;
+		var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", "987654321");
+		//var server = new HttpServer(IPAddress.Parse(ip), port);
+		try
+		{
+			server.Start();
+		}
+		catch (Exception ex)
+		{
+			Log("&c" + ex.ToString());
+			return;
+		}
 
-            Console.WriteLine(request.Url);
+		Log("[&2Info&r] &fStarting server ...");
+		Log($"[&2Info&r] &fServer started and binded on &7http{(server.IsTlsSecure ? "s": "")}//{ip}:{port}/");
 
-            var stream = context.Response.ResponseStream;
-            var bytes = Encoding.UTF8.GetBytes("Hello");
-            stream.Write(bytes, 0, bytes.Length);
-            context.Close();
-        }
+		while (true)
+			using (var context = server.GetContext())
+			{
+				var request = context.Request;
+				var response = context.Response;
 
-        HttpListener listener = new HttpListener();
-        listener.Prefixes.Add("http://localhost:10100/");
-        listener.Start();
-        while (true)
-        {
-            var context = listener.GetContext();
-            var request = context.Request;
-            var response = context.Response;
+				Log($"[&8Log&r] ", false);
+				switch (request.Method)
+				{
+					case "GET":
+						Log("&f", false);
+						break;
+					case "POST":
+						Log("&a", false);
+						break;
+					case "PUT":
+						Log("&6", false);
+						break;
+					case "DELETE":
+						Log("&3", false);
+						break;
+					default:
+						Log("&1? ", false);
+						break;
+				}
+				Log(request.Method + " &r" + request.Url);
 
-            Console.WriteLine(request.Url?.AbsoluteUri);
+				
+			}
+	}
 
-            // Check the Accept-Encoding header
-            string acceptEncoding = request.Headers["Accept-Encoding"];
-            byte[] responseData = Encoding.UTF8.GetBytes("Hello, World!");
-
-            // Determine if we should compress the response
-            if (!string.IsNullOrEmpty(acceptEncoding))
-            {
-                if (acceptEncoding.Contains("gzip"))
-                {
-                    response.Headers.Add("Content-Encoding", "gzip");
-                    response.ContentType = "text/plain";
-
-                    using (MemoryStream compressedStream = new MemoryStream())
-                    using (GZipStream gzipStream = new GZipStream(compressedStream, CompressionMode.Compress))
-                    {
-                        gzipStream.Write(responseData, 0, responseData.Length);
-                        response.ContentLength64 = compressedStream.Length;
-                        compressedStream.Position = 0;
-                        compressedStream.CopyTo(response.OutputStream);
-                    }
-                }
-                else if (acceptEncoding.Contains("deflate"))
-                {
-                    response.Headers.Add("Content-Encoding", "deflate");
-                    response.ContentType = "text/plain";
-
-                    using (MemoryStream compressedStream = new MemoryStream())
-                    using (DeflateStream deflateStream = new DeflateStream(compressedStream, CompressionMode.Compress))
-                    {
-                        deflateStream.Write(responseData, 0, responseData.Length);
-                        response.ContentLength64 = compressedStream.Length;
-                        compressedStream.Position = 0;
-                        compressedStream.CopyTo(response.OutputStream);
-                    }
-                }
-                else
-                {
-                    // If no compression is accepted, send the uncompressed response
-                    response.ContentLength64 = responseData.Length;
-                    response.OutputStream.Write(responseData, 0, responseData.Length);
-                }
-            }
-            else
-            {
-                // If no Accept-Encoding header, send the uncompressed response
-                response.ContentLength64 = responseData.Length;
-                response.OutputStream.Write(responseData, 0, responseData.Length);
-            }
-
-            // Close the response
-            response.OutputStream.Close();
-        }
-    }
+	static void Log(string text, bool newLine = true)
+	{
+		for (int i = 0; i < text.Length; i++)
+		{
+			if (text[i] == '&' && text.Length >= i && Regex.Match(text[i + 1].ToString(), @"^[0-9A-Ra-r]+$").Success)
+			{
+				if (char.ToLower(text[i + 1]) == 'r')
+					Console.ResetColor();
+				else Console.ForegroundColor = (ConsoleColor)Convert.ToInt32(text[i + 1].ToString(), 16);
+				i++;
+				if (i + 1 >= text.Length)
+					break;
+				continue;
+			}
+			Console.Write(text[i]);
+		}
+		if (newLine) Console.WriteLine();
+	}
 }

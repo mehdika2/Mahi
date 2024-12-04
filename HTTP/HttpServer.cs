@@ -16,6 +16,7 @@ namespace Mahi
         private const int ReceiveTimeoutMillis = 5000; // Timeout for receiving data
 
         public int Backlog { get; set; } = 5;
+        public bool IsTlsSecure {  get { return _certificate != null; } }
 
         Socket _server;
         X509Certificate2 _certificate;
