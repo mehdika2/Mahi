@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<title>Hello world</title>
+</head>
+
+<body>
+<h1>
+${
+	local dayNames = {
+		[1] = "Sunday",
+		[2] = "Monday",
+		[3] = "Tuesday",
+		[4] = "Wednesday",
+		[5] = "Thursday",
+		[6] = "Friday",
+		[7] = "Saturday"
+	}
+
+	local date = os.date("*t")
+	go('Today: ' .. dayNames[date.wday] .. ' ' 
+	.. date.year .. '/' .. date.month .. '/'
+	.. date.day .. ' ' .. 
+	date.hour .. ':' .. date.min .. ':' .. date.sec)
+}
+</h1>
+
+<table border='1'>
+    <tr>
+        <th>Index</th>
+        <th>Value</th>
+    </tr>
+    ${ 
+		rows = {}
+        for i = 1, 5 do
+            table.insert(rows, {i, 'Value ' .. i})
+        end
+        for _, row in ipairs(rows) do }
+	    <tr>
+			<td>
+				$go(row[2])
+			</td>
+			<td style="color: $(if row[1] % 2 == 1 then go('red') else go('black') end)">
+				${
+					if row[1] % 2 == 1 then
+						go('<span>Admin</span>')
+					else 
+						go('<span>' .. row[1] .. '</span>')
+					end
+				}
+			</td>
+		</tr>
+		$end
+</table>
+	
+</body>
+
+</html>
