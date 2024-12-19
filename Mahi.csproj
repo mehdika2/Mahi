@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FardinHttpServer\Fardin\Fardin.csproj" />
+    <ProjectReference Include="..\fardin\Fardin.csproj" />
   </ItemGroup>
 
   <ItemGroup>
