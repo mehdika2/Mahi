@@ -65,8 +65,14 @@ namespace Mahi.Core
 			}
 			Program.Log(request.Method + " &r" + request.Url);
 
-			// Routing
 			string filename = request.Url.TrimStart('/');
+
+			// Routing in config ...
+			if (filename == "")
+				filename = "index.htmlua";
+
+			filename = Path.GetFullPath("wwwapp") + '\\' + filename;
+
 			if (File.Exists(filename))
 				if (filename.EndsWith(".htmlua"))
 					try
@@ -78,6 +84,8 @@ namespace Mahi.Core
 					}
 					catch (Exception ex)
 					{
+						response.StatusCode = 500;
+						response.StatusText = "Internal Server Error";
 						HandleException(ex, stream);
 					}
 				else
@@ -89,7 +97,7 @@ namespace Mahi.Core
 			else
 			{
 				response.StatusCode = 404;
-				response.StatusText = "Not found";
+				response.StatusText = "Not Found";
 				stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Url).Replace("{Description}", "404 Page not found")));
 			}
 		}

@@ -16,18 +16,47 @@ namespace Mahi.Core
 		{
 			using (Lua lua = new Lua())
 			{
-				var builtInFunctions = new BuiltInFunctions(lua, request, response);
+				var builtInFunctions = new BuiltInFunctions(response);
 
 				lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
+				lua.RegisterFunction("setStatus", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setStatus"));
 
-				lua["headers"] = builtInFunctions.headers;
-				//lua["Request"] = request;
-				//lua["Response"] = response;
+				lua["request"] = new
+				{
+					method = request.Method,
+					url = request.Url,
+					httpVersion = request.HttpVersion,
+					headers = ConvertDictionaryToLuaTable(lua, request.Headers.ToDictionary(i => i.Name, i => i.Value)),
+					isMultipartRequest = request.IsMultipartRequest,
+					content = request.Content
+				};
+
+				lua["response"] = new ResponseContext(lua, response);
 
 				lua.DoString(script);
 
 				stream.Write(Encoding.UTF8.GetBytes(builtInFunctions._html));
 			}
+		}
+
+		public static LuaTable ConvertArrayToLuaTable(Lua lua, int[] array)
+		{
+			var table = lua.DoString("return {}")[0] as LuaTable;
+
+			for (int i = 0; i < array.Length; i++)
+				table[i + 1] = array[i]; // Shift index to 1-based
+
+			return table;
+		}
+
+		public static LuaTable ConvertDictionaryToLuaTable(Lua lua, Dictionary<string, string> dictionary)
+		{
+			var table = lua.DoString("return {}")[0] as LuaTable;
+
+			foreach (var kvp in dictionary)
+				table[kvp.Key] = kvp.Value;
+
+			return table;
 		}
 	}
 }
