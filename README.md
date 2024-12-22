@@ -1,4 +1,6 @@
-<p align="center">![image](bin/Debug/net8.0/wwwapp/favicon.ico)</p>
+<p align="center">
+    <img src="/images/mahi.png" alt="Mahi logo designed by Freepik.com">
+</p>
 
 # My Project
 
