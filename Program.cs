@@ -28,10 +28,14 @@ namespace Mahi
 			return;
 #endif
 
-			//ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+			// ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 			Console.Title = "Mahi1.0.0";
 
-			//var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
+			// installing default modules
+			if (Environment.GetCommandLineArgs().Contains("-i"))
+				InstallModules();
+
+			// var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
 			var server = new HttpServer(IPAddress.Parse(ip), port);
 			server.BaseDirectory = "wwwapp";
 
@@ -51,6 +55,15 @@ namespace Mahi
 			RequestHandler.Process(server);
 
 			logger.Dispose();
+		}
+
+		static void InstallModules()
+		{
+			string moduesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "modules");
+			if (!Directory.Exists(moduesDirectory))
+				Directory.CreateDirectory(moduesDirectory);
+
+			File.WriteAllText(Path.Combine(moduesDirectory, "json.lua"), Encoding.UTF8.GetString(Resources.json));
 		}
 
 		internal static void Log(string message, bool newLine = true)

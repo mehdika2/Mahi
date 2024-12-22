@@ -28,7 +28,7 @@ namespace Mahi.Core
 		{
 			try
 			{
-				writer.Write($"{DateTime.Now}: ");
+				writer.Write($"{DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss.ff")}: ");
 
 				for (int i = 0; i < message.Length; i++)
 				{
@@ -52,7 +52,6 @@ namespace Mahi.Core
 					Console.WriteLine();
 				}
 
-				writer.Flush();
 				writer.Flush();
 			}
 			catch (Exception ex)

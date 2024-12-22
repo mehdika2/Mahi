@@ -3,7 +3,7 @@
      title="لوگوی ماهی طراحی شده توسط Freepik.com" width="200">
 </p>
 
-# مفسر ماهی
+# مفسر ماهی ([English](https://github.com/mehdika2/Mahi/blob/main/README.md))
 
 ماهی یک برنامه وب مبتنی بر Lua است که از سرور وب فاردین برای مدیریت درخواست‌های HTTP استفاده می‌کند.
 
@@ -64,3 +64,4 @@
 
 ## اعتباردهی
 - لوگو طراحی شده توسط [Freepik](https://www.freepik.com)
+- [dkjson](https://github.com/your-repo/dkjson) برای مدیریت JSON استفاده می‌کند که تحت مجوز MIT منتشر شده است. اطلاعیه حق نشر اصلی در پروژه گنجانده شده است.

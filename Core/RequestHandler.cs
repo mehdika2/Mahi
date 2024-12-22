@@ -44,26 +44,26 @@ namespace Mahi.Core
 		{
 			response.Headers.Add("x-powered-by", "Mahi-" + Resources.Version);
 
-			Program.Log($"[&8Log&r] ", false);
+			string log = "[&8Log&r] ";
 			switch (request.Method)
 			{
 				case "GET":
-					Program.Log("&f", false);
+					log += "&f";
 					break;
 				case "POST":
-					Program.Log("&a", false);
+					log += "&a";
 					break;
 				case "PUT":
-					Program.Log("&6", false);
+					log += "&6";
 					break;
 				case "DELETE":
-					Program.Log("&3", false);
+					log += "&3";
 					break;
 				default:
-					Program.Log("&1? ", false);
+					log += "&1? ";
 					break;
 			}
-			Program.Log(request.Method + " &r" + request.Uri.AbsolutePath);
+			Program.Log(log += request.Method + " &r" + request.Uri.AbsolutePath);
 
 			// Routing in config ...
 			if (request.Uri.AbsolutePath == "/")

@@ -3,7 +3,7 @@
      title="Mahi logo designed by Freepik.com" width="200">
 </p>
 
-# Mahi interpreter
+# Mahi interpreter ([فارسی](https://github.com/mehdika2/Mahi/blob/main/README.FA.md))
 
 Mahi is a Lua-based Web Application, utilizing the Fardin web server for handling HTTP requests.
 
@@ -65,3 +65,4 @@ Before you can run this project, you need to have the following installed:
 
 ## Credits
 - Logo designed by [Freepik](https://www.freepik.com)
+- This project uses the [dkjson](https://github.com/LuaDist/dkjson) module for JSON handling, which is licensed under the MIT License.
