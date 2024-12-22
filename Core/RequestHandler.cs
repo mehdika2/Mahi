@@ -63,15 +63,17 @@ namespace Mahi.Core
 					Program.Log("&1? ", false);
 					break;
 			}
-			Program.Log(request.Method + " &r" + request.Url);
-
-			string filename = request.Url.TrimStart('/');
+			Program.Log(request.Method + " &r" + request.Uri.AbsolutePath);
 
 			// Routing in config ...
-			if (filename == "")
-				filename = "index.htmlua";
+			if (request.Uri.AbsolutePath == "/")
+			{
+				UriBuilder uriBuilder = new UriBuilder(request.Uri);
+				uriBuilder.Path = "/index.htmlua";
+				request.Items["R_URI"] = uriBuilder.Uri;
+			}
 
-			filename = Path.GetFullPath("wwwapp") + '\\' + filename;
+			string filename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/');
 
 			if (File.Exists(filename))
 				if (filename.EndsWith(".htmlua"))
@@ -98,7 +100,7 @@ namespace Mahi.Core
 			{
 				response.StatusCode = 404;
 				response.StatusText = "Not Found";
-				stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Url).Replace("{Description}", "404 Page not found")));
+				stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Page not found")));
 			}
 		}
 
@@ -108,6 +110,8 @@ namespace Mahi.Core
 				Directory.CreateDirectory("Errors");
 
 			File.WriteAllText(Path.Combine("Errors", DateTime.Now.ToString("yyyyMMdd_hhmmss_fffffff") + ".txt"), ex.ToString());
+
+			Program.Log("&r[&4Error&r] " + ex.Message);
 		}
 
 		static void HandleException(Exception ex, MemoryStream responseStream)
@@ -115,6 +119,7 @@ namespace Mahi.Core
 			responseStream.Write(Encoding.UTF8.GetBytes(Resources.Http500.Replace("{Error}", "Internal server error").Replace("{Type}", ex.GetType().Name)
 				.Replace("{Description}", WebUtility.HtmlEncode(ex.Message)).Replace("{Exception}", WebUtility.HtmlEncode(ex.ToString()))
 				.Replace("{DotnetVersion}", "dotnet " + Environment.Version.ToString()).Replace("{MahiVersion}", "Mahi " + Resources.Version)));
+
 			HandleException(ex);
 		}
 	}

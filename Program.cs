@@ -33,6 +33,7 @@ namespace Mahi
 
 			//var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
 			var server = new HttpServer(IPAddress.Parse(ip), port);
+			server.BaseDirectory = "wwwapp";
 
 			try
 			{
@@ -45,7 +46,7 @@ namespace Mahi
 			}
 
 			logger.Log("[&2Info&r] &fStarting server ...");
-			logger.Log($"[&2Info&r] &fServer started and binded on &7http{(server.IsTlsSecure ? "s" : "")}//{ip}:{port}/");
+			logger.Log($"[&2Info&r] &fServer started and binded on &7http{(server.IsTlsSecure ? "s" : "")}://{ip}:{port}/");
 
 			RequestHandler.Process(server);
 

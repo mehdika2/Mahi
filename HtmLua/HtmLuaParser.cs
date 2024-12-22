@@ -77,6 +77,8 @@ namespace Mahi.HtmLua
 				EndGo();
 
 			position += 2;
+			int openBrackets = 0;
+			bool stringOpen = false;
 			while (!isAtEnd())
 				switch (current)
 				{
@@ -85,9 +87,29 @@ namespace Mahi.HtmLua
 							ParseHtml();
 						break;
 					case '}':
+						if(stringOpen || openBrackets > 0)
+						{
+							if (!stringOpen)
+								openBrackets--;
+							script += current;
+							position++;
+							break;
+						}
 						position++;
 						StartGo();
 						return;
+					case '\'':
+					case '"':
+						stringOpen = !stringOpen;
+						script += current;
+						position++;
+						break;
+					case '{':
+						if(!stringOpen)
+							openBrackets++;
+						script += current;
+						position++;
+						break;
 					default:
 						script += current;
 						position++;

@@ -16,22 +16,28 @@ namespace Mahi.Core
 		{
 			using (Lua lua = new Lua())
 			{
-				var builtInFunctions = new BuiltInFunctions(response);
+				var builtInFunctions = new BuiltInFunctions(lua, response);
 
 				lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
 				lua.RegisterFunction("setStatus", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setStatus"));
+				lua.RegisterFunction("import", builtInFunctions, typeof(BuiltInFunctions).GetMethod("import"));
 
 				lua["request"] = new
 				{
 					method = request.Method,
-					url = request.Url,
+					uri = request.Uri,
 					httpVersion = request.HttpVersion,
 					headers = ConvertDictionaryToLuaTable(lua, request.Headers.ToDictionary(i => i.Name, i => i.Value)),
 					isMultipartRequest = request.IsMultipartRequest,
-					content = request.Content
+					content = request.Content,
+					items = request.Items,
+					userAddress = request.Items["R_IP_ADDRESS"],
+					userPort = request.Items["R_IP_PORT"]
 				};
 
 				lua["response"] = new ResponseContext(lua, response);
+
+				lua["json"] = new BuiltInJson(lua);
 
 				lua.DoString(script);
 
