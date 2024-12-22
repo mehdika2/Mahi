@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using NLua;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,6 +46,35 @@ namespace Mahi.HtmLua
 				Console.WriteLine($"Error importing module '{module}': {ex.Message}");
 				return null;
 			}
+		}
+
+		public void redirect(string url)
+		{
+			response.StatusCode = 302;
+			if(string.IsNullOrWhiteSpace(url))
+				response.Headers.Add("Location", "/");
+			else response.Headers.Add("Location", url);
+		}
+
+		public void addHeader(string name, string value)
+		{
+			response.Headers.Add(name, value);
+		}
+
+
+		// MyCookieName=MyCookieValue; expires=Wed, 01 Jan 2025 00:00:00 GMT; path=/; HttpOnly; Secure
+		public void setCookie(string name, string value, string expire = null, string path = "/", string samesite = "Lax", bool secure = true, bool httpOnly = false)
+		{
+			DateTime expireDate = DateTime.Now.AddDays(1);
+			if (expire != null)
+				expireDate = DateTime.Parse(expire);
+
+			response.Cookies.AddCookie(new HttpCookie(name, value, expireDate, path, (SameSiteMode)Enum.Parse(typeof(SameSiteMode), samesite), secure, httpOnly));
+		}
+
+		public void deleteCookie(string name)
+		{
+			response.Cookies.RemoveCookie(name);
 		}
 	}
 

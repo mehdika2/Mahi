@@ -13,6 +13,8 @@ using Mahi.Properties;
 using static Mahi.Core.Logger;
 using Mahi.Core;
 
+using CookieCollection = Fardin.CookieCollection;
+
 namespace Mahi
 {
 	internal class Program
@@ -23,11 +25,6 @@ namespace Mahi
 
 		static void Main()
 		{
-#if UNITTEST
-			UnitTest.Run();
-			return;
-#endif
-
 			// ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 			Console.Title = "Mahi1.0.0";
 

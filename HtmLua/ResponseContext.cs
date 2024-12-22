@@ -26,5 +26,6 @@ namespace Mahi.HtmLua
         public string statusText { get { return response.StatusText; } }
         public string httpVersion { get { return response.HttpVersion; } }
         public LuaTable headers { get { return Core.LuaInvoker.ConvertDictionaryToLuaTable(lua, response.Headers.ToDictionary(i => i.Name, i => i.Value)); } }
+		public LuaTable cookies {  get { return Core.LuaInvoker.ConvertDictionaryToLuaTable(lua, response.Cookies.ToDictionary(i => i.Name, i => i.Value)); } }
 	}
 }

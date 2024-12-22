@@ -18,9 +18,21 @@ namespace Mahi.Core
 			{
 				var builtInFunctions = new BuiltInFunctions(lua, response);
 
-				lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
-				lua.RegisterFunction("setStatus", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setStatus"));
+				// register import
 				lua.RegisterFunction("import", builtInFunctions, typeof(BuiltInFunctions).GetMethod("import"));
+
+				// register html helpers
+				lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
+
+				// register response helpers
+				lua.RegisterFunction("setStatus", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setStatus"));
+				lua.RegisterFunction("redirect", builtInFunctions, typeof(BuiltInFunctions).GetMethod("redirect"));
+				lua.RegisterFunction("addHeader", builtInFunctions, typeof(BuiltInFunctions).GetMethod("addHeader"));
+				lua.RegisterFunction("setCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setCookie"));
+				lua.RegisterFunction("deleteCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("deleteCookie"));
+
+				// contains key built in function
+				lua.DoString("function containsKey(table, key) return table[key] ~= nil end");
 
 				lua["request"] = new
 				{
@@ -28,6 +40,7 @@ namespace Mahi.Core
 					uri = request.Uri,
 					httpVersion = request.HttpVersion,
 					headers = ConvertDictionaryToLuaTable(lua, request.Headers.ToDictionary(i => i.Name, i => i.Value)),
+					cookies = ConvertDictionaryToLuaTable(lua, request.Cookies.ToDictionary(i => i.Name, i => i.Value)),
 					isMultipartRequest = request.IsMultipartRequest,
 					content = request.Content,
 					items = request.Items,
