@@ -50,9 +50,9 @@ namespace Mahi.Core
 
 				lua["response"] = new ResponseContext(lua, response);
 
-				lua["json"] = new BuiltInJson(lua);
+				string name = '_' + Guid.NewGuid().ToString().Substring(0, 4);
 
-				lua.DoString(script);
+				lua.DoString($"{name} = false ::start:: if {name} then return else {name} = true end " + script);
 
 				stream.Write(Encoding.UTF8.GetBytes(builtInFunctions._html));
 			}

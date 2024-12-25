@@ -77,12 +77,12 @@ namespace Mahi.Core
 
 			if (File.Exists(filename))
 				if (filename.EndsWith(".htmlua"))
+				{
+					string script;
 					try
 					{
 						HtmLuaParser htmluaParser = new HtmLuaParser();
-						var script = htmluaParser.ToLua(File.ReadAllText(filename));
-
-						LuaInvoker.Run(script, stream, request, response);
+						script = htmluaParser.ToLua(File.ReadAllText(filename));
 					}
 					catch (Exception ex)
 					{
@@ -90,6 +90,7 @@ namespace Mahi.Core
 						response.StatusText = "Internal Server Error";
 						HandleException(ex, stream);
 					}
+				}
 				else
 				{
 					// Returning file

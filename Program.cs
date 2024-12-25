@@ -60,7 +60,7 @@ namespace Mahi
 			if (!Directory.Exists(moduesDirectory))
 				Directory.CreateDirectory(moduesDirectory);
 
-			File.WriteAllText(Path.Combine(moduesDirectory, "json.lua"), Encoding.UTF8.GetString(Resources.json));
+			File.WriteAllText(Path.Combine(moduesDirectory, "json.lua"), Encoding.UTF8.GetString(Resources.dkjson));
 		}
 
 		internal static void Log(string message, bool newLine = true)

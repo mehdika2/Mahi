@@ -120,7 +120,7 @@ namespace Mahi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] json {
+        internal static byte[] dkjson {
             get {
                 object obj = ResourceManager.GetObject("json", resourceCulture);
                 return ((byte[])(obj));

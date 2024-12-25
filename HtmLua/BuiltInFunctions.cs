@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Mahi.HtmLua
@@ -61,8 +63,6 @@ namespace Mahi.HtmLua
 			response.Headers.Add(name, value);
 		}
 
-
-		// MyCookieName=MyCookieValue; expires=Wed, 01 Jan 2025 00:00:00 GMT; path=/; HttpOnly; Secure
 		public void setCookie(string name, string value, string expire = null, string path = "/", string samesite = "Lax", bool secure = true, bool httpOnly = false)
 		{
 			DateTime expireDate = DateTime.Now.AddDays(1);
@@ -75,36 +75,6 @@ namespace Mahi.HtmLua
 		public void deleteCookie(string name)
 		{
 			response.Cookies.RemoveCookie(name);
-		}
-	}
-
-	public class BuiltInJson
-	{
-		private Lua lua;
-		public BuiltInJson(Lua lua)
-		{
-			this.lua = lua;
-		}
-
-		public string ser(object obj) 
-			=> serialize(obj);
-		public string serialize(object obj)
-		{
-			return JsonConvert.SerializeObject(obj);
-		}
-
-		public object deser(string str)
-			=> deserialize(str);
-		public object deserialize(string str)
-		{
-			// Deserialize JSON to a dynamic object
-			return JsonConvert.DeserializeObject(str);
-
-			//// Convert the dynamic object to a Lua table
-			//var table = lua.DoString("return {}")[0] as LuaTable;
-			//foreach (var property in deserializedObject.Properties())
-			//	table[property.Name] = property.Value.ToObject<object>();
-			//return table;
 		}
 	}
 }

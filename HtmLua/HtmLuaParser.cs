@@ -85,6 +85,8 @@ namespace Mahi.HtmLua
 					case '<':
 						if (char.IsLetter(next))
 							ParseHtml();
+						position++;
+						StartGo();
 						break;
 					case '}':
 						if(stringOpen || openBrackets > 0)
