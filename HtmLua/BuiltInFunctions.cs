@@ -4,6 +4,8 @@ using Newtonsoft.Json.Linq;
 using NLua;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Dynamic;
 using System.Linq;
@@ -75,6 +77,11 @@ namespace Mahi.HtmLua
 		public void deleteCookie(string name)
 		{
 			response.Cookies.RemoveCookie(name);
+		}
+
+		public SqlConnection create_mssql_connection(string connectionString)
+		{
+			return new SqlConnection(connectionString);
 		}
 	}
 }

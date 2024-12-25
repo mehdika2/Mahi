@@ -83,6 +83,8 @@ namespace Mahi.Core
 					{
 						HtmLuaParser htmluaParser = new HtmLuaParser();
 						script = htmluaParser.ToLua(File.ReadAllText(filename));
+
+						LuaInvoker.Run(script, stream, request, response);
 					}
 					catch (Exception ex)
 					{

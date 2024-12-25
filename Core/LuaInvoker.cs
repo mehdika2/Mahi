@@ -30,6 +30,7 @@ namespace Mahi.Core
 				lua.RegisterFunction("addHeader", builtInFunctions, typeof(BuiltInFunctions).GetMethod("addHeader"));
 				lua.RegisterFunction("setCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setCookie"));
 				lua.RegisterFunction("deleteCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("deleteCookie"));
+				lua.RegisterFunction("create_mssql_connection", builtInFunctions, typeof(BuiltInFunctions).GetMethod("create_mssql_connection"));
 
 				// contains key built in function
 				lua.DoString("function containsKey(table, key) return table[key] ~= nil end");

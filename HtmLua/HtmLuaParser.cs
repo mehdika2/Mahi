@@ -84,7 +84,10 @@ namespace Mahi.HtmLua
 				{
 					case '<':
 						if (char.IsLetter(next))
+						{
 							ParseHtml();
+							break;
+						}
 						position++;
 						StartGo();
 						break;
@@ -145,7 +148,7 @@ namespace Mahi.HtmLua
 
 							// loop for manage self-closing tags
 							string closedTag = GetTagName();
-							while (true)
+							while (openTags.Count > 0)
 							{
 								string lastTag = openTags.Pop();
 								if (lastTag != closedTag)
@@ -169,7 +172,16 @@ namespace Mahi.HtmLua
 
 						// open tag
 						position++;
-						openTags.Push(GetTagName());
+						string tag = GetTagName();
+						if (!SelfClosingTags.List.Contains(tag))
+							openTags.Push(tag);
+						else if (openTags.Count == 0)
+						{
+							script += current;
+							position++;
+							EndGo();
+							return;
+						}
 						break;
 					case '$':
 						Parse();

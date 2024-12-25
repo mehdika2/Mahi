@@ -18,6 +18,7 @@
   <ItemGroup>
     <PackageReference Include="newtonsoft.json" Version="13.0.3" />
     <PackageReference Include="nlua" Version="1.7.3" />
+    <PackageReference Include="system.data.sqlclient" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>
