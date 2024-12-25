@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Fardin;
 using NLua;
 using Mahi.HtmLua;
+using System.Data.SqlClient;
 
 namespace Mahi.Core
 {
