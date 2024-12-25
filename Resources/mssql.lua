@@ -5,13 +5,6 @@ function mssql.createConnection(connectionString)
     local connection = {}
     connection.context = create_mssql_connection(connectionString)
 
-    function connection:executeScalar(query)
-        local command = self.context:CreateCommand()
-        command.CommandText = query
-        result = command:ExecuteScalar()
-        return result
-    end
-
     function connection:open()
         self.context:Open()
     end
@@ -22,6 +15,13 @@ function mssql.createConnection(connectionString)
 
     function connection:isOpen()
         return tostring(self.context.State) == "Open: 1"
+    end
+
+    function connection:executeScalar(query)
+        local command = self.context:CreateCommand()
+        command.CommandText = query
+        result = command:ExecuteScalar()
+        return result
     end
 
     function connection:executeReader(query)
@@ -36,6 +36,12 @@ function mssql.createConnection(connectionString)
             return self.dataReader
         end
         return reader
+    end
+
+    function connection:execute(query)
+        local command = self.context:CreateCommand()
+        command.CommandText = query
+        return command:ExecuteNonQuery()
     end
 
     return connection
