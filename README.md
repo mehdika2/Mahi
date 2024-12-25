@@ -61,7 +61,8 @@ Before you can run this project, you need to have the following installed:
    - Ensure that the page files are placed in the `wwwapp` folder:
 
 7. **Place Required Modules**:
-   - You can download modules and palce it in `modules` folder:
+   - To install default modules use ```mahi -i``` command after build
+   - You can download modules and palce it in `modules` folder
 
 ## Credits
 - Logo designed by [Freepik](https://www.freepik.com)
