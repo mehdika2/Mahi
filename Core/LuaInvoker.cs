@@ -8,6 +8,7 @@ using Fardin;
 using NLua;
 using Mahi.HtmLua;
 using System.Data.SqlClient;
+using System.Collections.Specialized;
 
 namespace Mahi.Core
 {
@@ -26,12 +27,14 @@ namespace Mahi.Core
 				lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
 
 				// register response helpers
+				lua.RegisterFunction("log", builtInFunctions, typeof(BuiltInFunctions).GetMethod("log"));
 				lua.RegisterFunction("setStatus", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setStatus"));
 				lua.RegisterFunction("redirect", builtInFunctions, typeof(BuiltInFunctions).GetMethod("redirect"));
 				lua.RegisterFunction("addHeader", builtInFunctions, typeof(BuiltInFunctions).GetMethod("addHeader"));
 				lua.RegisterFunction("setCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setCookie"));
 				lua.RegisterFunction("deleteCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("deleteCookie"));
 				lua.RegisterFunction("create_mssql_connection", builtInFunctions, typeof(BuiltInFunctions).GetMethod("create_mssql_connection"));
+				lua.RegisterFunction("isNullOrEmpty", builtInFunctions, typeof(BuiltInFunctions).GetMethod("isNullOrEmpty"));
 
 				// contains key built in function
 				lua.DoString("function containsKey(table, key) return table[key] ~= nil end");
@@ -43,11 +46,13 @@ namespace Mahi.Core
 					httpVersion = request.HttpVersion,
 					headers = ConvertDictionaryToLuaTable(lua, request.Headers.ToDictionary(i => i.Name, i => i.Value)),
 					cookies = ConvertDictionaryToLuaTable(lua, request.Cookies.ToDictionary(i => i.Name, i => i.Value)),
+					post = ConvertDictionaryToLuaTable(lua, request.RequestParameters),
+					get = ConvertDictionaryToLuaTable(lua, request.UrlParameters),
 					isMultipartRequest = request.IsMultipartRequest,
 					content = request.Content,
 					items = request.Items,
 					userAddress = request.Items["R_IP_ADDRESS"],
-					userPort = request.Items["R_IP_PORT"]
+					userPort = request.Items["R_IP_PORT"],
 				};
 
 				lua["response"] = new ResponseContext(lua, response);
@@ -76,6 +81,19 @@ namespace Mahi.Core
 
 			foreach (var kvp in dictionary)
 				table[kvp.Key] = kvp.Value;
+
+			return table;
+		}
+
+		public static LuaTable ConvertDictionaryToLuaTable(Lua lua, NameValueCollection collection)
+		{
+			var table = lua.DoString("return {}")[0] as LuaTable;
+
+			if (collection == null)
+				return table;
+
+			foreach (var key in collection.AllKeys)
+				table[key] = collection[key];
 
 			return table;
 		}

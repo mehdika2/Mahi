@@ -12,7 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Mahi.Core
 {
-	internal class Logger : IDisposable
+	public class Logger : IDisposable
 	{
 		private StreamWriter writer;
 

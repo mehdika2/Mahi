@@ -29,8 +29,7 @@ namespace Mahi
 			Console.Title = "Mahi1.0.0";
 
 			// installing default modules
-			if (Environment.GetCommandLineArgs().Contains("-i"))
-				InstallModules();
+			InstallModules();
 
 			// var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
 			var server = new HttpServer(IPAddress.Parse(ip), port);
@@ -60,9 +59,18 @@ namespace Mahi
 			if (!Directory.Exists(moduesDirectory))
 				Directory.CreateDirectory(moduesDirectory);
 
-			File.WriteAllText(Path.Combine(moduesDirectory, "json.lua"), Resources.dkjson);
-			File.WriteAllText(Path.Combine(moduesDirectory, "mssql.lua"), Resources.mssql);
-        }
+			string jsonModulePath = Path.Combine(moduesDirectory, "json.lua");
+			if (!File.Exists(jsonModulePath))
+				File.WriteAllText(jsonModulePath, Encoding.UTF8.GetString(Resources.dkjson));
+
+			string mssqlModulePath = Path.Combine(moduesDirectory, "mssql.lua");
+			if (!File.Exists(mssqlModulePath))
+				File.WriteAllText(mssqlModulePath, Encoding.UTF8.GetString(Resources.mssql));
+
+			string hashModulePath = Path.Combine(moduesDirectory, "hash.lua");
+			if (!File.Exists(hashModulePath))
+				File.WriteAllText(hashModulePath, Encoding.UTF8.GetString(Resources.hash));
+		}
 
 		internal static void Log(string message, bool newLine = true)
 			=> logger.Log(message, newLine);

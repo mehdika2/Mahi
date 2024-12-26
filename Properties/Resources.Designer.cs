@@ -70,32 +70,22 @@ namespace Mahi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to -- Module options:
-        ///local always_try_using_lpeg = true
-        ///local register_global_module_table = false
-        ///local global_module_name = &apos;json&apos;
-        ///
-        ///--[==[
-        ///
-        ///David Kolf&apos;s JSON module for Lua 5.1/5.2
-        ///
-        ///Version 2.5
-        ///
-        ///
-        ///For the documentation see the corresponding readme.txt or visit
-        ///&lt;http://dkolf.de/src/dkjson-lua.fsl/&gt;.
-        ///
-        ///You can contact the author by sending an e-mail to &apos;david&apos; at the
-        ///domain &apos;dkolf.de&apos;.
-        ///
-        ///
-        ///Copyright (C) 2010-2014 David Heiko Kolf
-        ///
-        ///Permission is hereby granted, free of charge, to any person ob [rest of string was truncated]&quot;;.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static string dkjson {
+        internal static byte[] dkjson {
             get {
-                return ResourceManager.GetString("dkjson", resourceCulture);
+                object obj = ResourceManager.GetObject("dkjson", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] hash {
+            get {
+                object obj = ResourceManager.GetObject("hash", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -148,29 +138,12 @@ namespace Mahi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to local mssql = { version = &quot;1.0&quot; }
-        ///
-        ///-- Create connection
-        ///function mssql.createConnection(connectionString)
-        ///    local connection = {}
-        ///    connection.context = create_mssql_connection(connectionString)
-        ///
-        ///    function connection:executeScalar(query)
-        ///        local command = self.context:CreateCommand()
-        ///        command.CommandText = query
-        ///        result = command:ExecuteScalar()
-        ///        return result
-        ///    end
-        ///
-        ///    function connection:open()
-        ///        self.context:Open()
-        ///    end
-        ///
-        ///    function connect [rest of string was truncated]&quot;;.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static string mssql {
+        internal static byte[] mssql {
             get {
-                return ResourceManager.GetString("mssql", resourceCulture);
+                object obj = ResourceManager.GetObject("mssql", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

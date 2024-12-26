@@ -16,7 +16,9 @@
 			"keygen",
 			"param",
 			"source",
-			"track"
+			"track",
+			"path",
+			"!--"
 		};
 	}
 }

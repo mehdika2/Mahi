@@ -17,16 +17,29 @@ function mssql.createConnection(connectionString)
         return tostring(self.context.State) == "Open: 1"
     end
 
-    function connection:executeScalar(query)
+    function addParameters(command, params)
+        if params ~= nil then
+            if type(params) ~= "table" then
+                error("Second argument must be a table")
+            end
+            for key,value in pairs(params) do
+                command.Parameters:AddWithValue('@'.. key, value)
+            end
+        end
+    end
+
+    function connection:executeScalar(query, params)
         local command = self.context:CreateCommand()
         command.CommandText = query
+        addParameters(command, params)
         result = command:ExecuteScalar()
         return result
     end
 
-    function connection:executeReader(query)
+    function connection:executeReader(query, params)
         local command = self.context:CreateCommand()
         command.CommandText = query
+        addParameters(command, params)
         local reader = {}
         reader.dataReader = command:ExecuteReader()
         function reader:read()
@@ -38,9 +51,10 @@ function mssql.createConnection(connectionString)
         return reader
     end
 
-    function connection:execute(query)
+    function connection:execute(query, params)
         local command = self.context:CreateCommand()
         command.CommandText = query
+        addParameters(command, params)
         return command:ExecuteNonQuery()
     end
 

@@ -278,6 +278,7 @@ namespace Mahi.HtmLua
 						stringOpen = !stringOpen;
 						break;
 					case '\r':
+					case '<':
 					case ' ':
 						if (!stringOpen && openParentheses == 0)
 						{
@@ -323,6 +324,8 @@ namespace Mahi.HtmLua
 					case '$':
 						Parse();
 						break;
+					case '\n':
+					case '\r':
 					case ' ':
 						if (!endTagName)
 							endTagName = true;

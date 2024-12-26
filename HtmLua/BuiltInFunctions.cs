@@ -1,4 +1,5 @@
 ﻿using Fardin;
+using Mahi.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLua;
@@ -31,6 +32,11 @@ namespace Mahi.HtmLua
         {
             _html += html?.ToString();
         }
+
+		public void log(string text)
+		{
+			Program.Log(text);
+		}
 
 		public void setStatus(int status, string text = null)
 		{
@@ -82,6 +88,11 @@ namespace Mahi.HtmLua
 		public SqlConnection create_mssql_connection(string connectionString)
 		{
 			return new SqlConnection(connectionString);
+		}
+
+		public bool isNullOrEmpty(string input)
+		{
+			return string.IsNullOrWhiteSpace(input);
 		}
 	}
 }

@@ -9,7 +9,7 @@ using Fardin;
 using NLua;
 using Mahi.HtmLua;
 using Mahi.Properties;
-using static Mahi.Core.Logger;
+using NLua.Exceptions;
 
 namespace Mahi.Core
 {
@@ -85,6 +85,12 @@ namespace Mahi.Core
 						script = htmluaParser.ToLua(File.ReadAllText(filename));
 
 						LuaInvoker.Run(script, stream, request, response);
+					}
+					catch (LuaScriptException ex)
+					{
+						response.StatusCode = 500;
+						response.StatusText = "Internal Server Error";
+						HandleException(ex.InnerException ?? ex, stream);
 					}
 					catch (Exception ex)
 					{
