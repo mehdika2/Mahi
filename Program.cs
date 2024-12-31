@@ -31,8 +31,8 @@ namespace Mahi
 			// installing default modules
 			InstallModules();
 
-			// var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
-			var server = new HttpServer(IPAddress.Parse(ip), port);
+			var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
+			//var server = new HttpServer(IPAddress.Parse(ip), port);
 			server.BaseDirectory = "wwwapp";
 
 			try

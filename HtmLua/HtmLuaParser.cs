@@ -23,7 +23,7 @@ namespace Mahi.HtmLua
 			template = htmlua;
 
 			// parsing section
-			for(;position < template.Length; position++)
+			for (; position < template.Length; position++)
 				Parse();
 
 			if (gopen)
@@ -83,7 +83,7 @@ namespace Mahi.HtmLua
 				switch (current)
 				{
 					case '<':
-						if(stringOpen)
+						if (stringOpen)
 						{
 							script += current;
 							position++;
@@ -98,7 +98,7 @@ namespace Mahi.HtmLua
 						StartGo();
 						break;
 					case '}':
-						if(stringOpen || openBrackets > 0)
+						if (stringOpen || openBrackets > 0)
 						{
 							if (!stringOpen)
 								openBrackets--;
@@ -116,7 +116,7 @@ namespace Mahi.HtmLua
 						position++;
 						break;
 					case '{':
-						if(!stringOpen)
+						if (!stringOpen)
 							openBrackets++;
 						script += current;
 						position++;
@@ -350,11 +350,11 @@ namespace Mahi.HtmLua
 		}
 
 		string GetErrorLine(int index, string code)
-        {
-            string[] lines = code.Substring(0, index).Split("\r\n");
-            int column = lines[lines.Length - 1].Length;
-            return Environment.NewLine + $" at line {lines.Length} : {column}";
-        }
+		{
+			string[] lines = code.Substring(0, index).Split("\r\n");
+			int column = lines[lines.Length - 1].Length;
+			return Environment.NewLine + $" at line {lines.Length} : {column}";
+		}
 
 		char current { get { return template[position]; } }
 		char next { get { return template[position + 1]; } }

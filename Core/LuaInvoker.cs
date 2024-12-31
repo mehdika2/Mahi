@@ -80,7 +80,7 @@ namespace Mahi.Core
 			var table = lua.DoString("return {}")[0] as LuaTable;
 
 			foreach (var kvp in dictionary)
-				table[kvp.Key] = kvp.Value;
+				table[kvp.Key.Replace('.', '_')] = kvp.Value;
 
 			return table;
 		}

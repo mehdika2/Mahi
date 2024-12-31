@@ -61,7 +61,7 @@ namespace Mahi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 987654321.
+        ///   Looks up a localized string similar to 123456789.
         /// </summary>
         internal static string CertificationPassword {
             get {
