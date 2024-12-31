@@ -83,7 +83,13 @@ namespace Mahi.HtmLua
 				switch (current)
 				{
 					case '<':
-						if (char.IsLetter(next))
+						if(stringOpen)
+						{
+							script += current;
+							position++;
+							break;
+						}
+						else if (char.IsLetter(next))
 						{
 							ParseHtml();
 							break;
