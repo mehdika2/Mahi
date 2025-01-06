@@ -10,6 +10,8 @@ using NLua;
 using Mahi.HtmLua;
 using Mahi.Properties;
 using NLua.Exceptions;
+using Mahi.Settings;
+using System.IO;
 
 namespace Mahi.Core
 {
@@ -68,48 +70,120 @@ namespace Mahi.Core
 			// Routing in config ...
 			if (request.Uri.AbsolutePath == "/")
 			{
-				UriBuilder uriBuilder = new UriBuilder(request.Uri);
-				uriBuilder.Path = "/index.htmlua";
-				request.Items["R_URI"] = uriBuilder.Uri;
+				bool defaultPageFound = false;
+				foreach (var defaultPage in AppConfig.Instance.DefaultPages)
+					if (File.Exists(Path.GetFullPath("wwwapp") + '\\' + defaultPage))
+					{
+						UriBuilder uriBuilder = new UriBuilder(request.Uri);
+						uriBuilder.Path = '/' + defaultPage;
+						request.Items["R_URI"] = uriBuilder.Uri;
+						defaultPageFound = true;
+					}
+				if (!defaultPageFound)
+				{
+					response.StatusCode = 404;
+					response.StatusText = "Not Found";
+					stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Defaul page not found.")));
+					return;
+				}
 			}
 
-			string filename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/');
-
-			if (File.Exists(filename))
-				if (filename.EndsWith(".htmlua"))
+			string filename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/').Replace('/', '\\');
+			if (AppConfig.Instance.ExtentionRequired)
+			{
+				if (request.Uri.AbsolutePath.EndsWith(".htmlua"))
 				{
-					string script;
-					try
+					if (File.Exists(filename))
 					{
-						HtmLuaParser htmluaParser = new HtmLuaParser();
-						script = htmluaParser.ToLua(File.ReadAllText(filename));
+						try
+						{
+							HtmLuaParser htmluaParser = new HtmLuaParser();
+							string script = htmluaParser.ToLua(File.ReadAllText(filename));
 
-						LuaInvoker.Run(script, stream, request, response);
+							LuaInvoker.Run(script, stream, request, response);
+						}
+						catch (LuaScriptException ex)
+						{
+							response.StatusCode = 500;
+							response.StatusText = "Internal Server Error";
+							HandleException(ex.InnerException ?? ex, stream);
+						}
+						catch (Exception ex)
+						{
+							response.StatusCode = 500;
+							response.StatusText = "Internal Server Error";
+							HandleException(ex, stream);
+						}
 					}
-					catch (LuaScriptException ex)
+					else
 					{
-						response.StatusCode = 500;
-						response.StatusText = "Internal Server Error";
-						HandleException(ex.InnerException ?? ex, stream);
-					}
-					catch (Exception ex)
-					{
-						response.StatusCode = 500;
-						response.StatusText = "Internal Server Error";
-						HandleException(ex, stream);
+						response.StatusCode = 404;
+						response.StatusText = "Not Found";
+						stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Page not found")));
 					}
 				}
-				else
+				else if (File.Exists(filename))
 				{
 					// Returning file
 					response.Headers.Add("content-type", MimeTypeHelper.GetMimeType(filename));
 					stream.Write(File.ReadAllBytes(filename));
 				}
+				else
+				{
+					response.StatusCode = 404;
+					response.StatusText = "Not Found";
+					stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Page not found")));
+				}
+			}
 			else
 			{
-				response.StatusCode = 404;
-				response.StatusText = "Not Found";
-				stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Page not found")));
+				if (File.Exists(filename))
+				{
+					if (filename.EndsWith(".htmlua"))
+					{
+						response.StatusCode = 404;
+						response.StatusText = "Not Found";
+						stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Page not found")));
+					}
+					else
+					{
+						// Returning file
+						response.Headers.Add("content-type", MimeTypeHelper.GetMimeType(filename));
+						stream.Write(File.ReadAllBytes(filename));
+					}
+				}
+				else
+				{
+					filename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/').Replace('/', '\\') + ".htmlua";
+					if (File.Exists(filename))
+					{
+						try
+						{
+							HtmLuaParser htmluaParser = new HtmLuaParser();
+							string script = htmluaParser.ToLua(File.ReadAllText(filename));
+
+							LuaInvoker.Run(script, stream, request, response);
+						}
+						catch (LuaScriptException ex)
+						{
+							response.StatusCode = 500;
+							response.StatusText = "Internal Server Error";
+							HandleException(ex.InnerException ?? ex, stream);
+						}
+						catch (Exception ex)
+						{
+							response.StatusCode = 500;
+							response.StatusText = "Internal Server Error";
+							HandleException(ex, stream);
+						}
+					}
+					else
+					{
+						response.StatusCode = 404;
+						response.StatusText = "Not Found";
+						stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Page not found")));
+					}
+				}
 			}
 		}
 

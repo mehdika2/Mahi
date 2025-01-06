@@ -8,6 +8,7 @@ using Fardin;
 using NLua;
 using System.Data.SqlClient;
 using System.Collections.Specialized;
+using Mahi.Settings;
 
 namespace Mahi.Core
 {
@@ -55,6 +56,13 @@ namespace Mahi.Core
 				};
 
 				lua["response"] = new ResponseContext(lua, response);
+
+				var config = AppConfig.Instance;
+
+				lua["appconfig"] = new
+				{
+					connectionStrings = ConvertDictionaryToLuaTable(lua, config.ConnectionStrings)
+				};
 
 				string name = '_' + Guid.NewGuid().ToString().Substring(0, 4);
 
