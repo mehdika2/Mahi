@@ -15,10 +15,12 @@ namespace Mahi.Settings
 
         public string[] DefaultPages { get; set; }
         public bool ExtentionRequired { get; set; }
+        public bool NotExtentionInUrl { get; set; }
         public Dictionary<string, string> ConnectionStrings { get; set; }
         public Dictionary<string, Route> Routes { get; set; }
+		public Dictionary<string, string> ErrorPages { get; internal set; }
 
-        private static AppConfig _instance;
+		private static AppConfig _instance;
         private static readonly object _lock = new object();
         public static AppConfig Instance
         {
@@ -32,7 +34,8 @@ namespace Mahi.Settings
             }
         }
 
-        public static void LoadConfigs()
+
+		public static void LoadConfigs()
 		{
 			if (!File.Exists(_filePath))
 				throw new FileNotFoundException(_filePath + " config file not found!");

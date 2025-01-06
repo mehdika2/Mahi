@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLua;
+using NLua.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -30,6 +31,11 @@ namespace Mahi.Core
         public void go(object html)
         {
             _html += html?.ToString();
+        }
+
+        public void safe(object html)
+        {
+            _html += System.Net.WebUtility.HtmlEncode(html?.ToString());
         }
 
         public void log(string text)
@@ -92,6 +98,19 @@ namespace Mahi.Core
         public bool isNullOrEmpty(string input)
         {
             return string.IsNullOrWhiteSpace(input);
+        }
+
+        public Exception getLastError()
+        {
+            var ex = RequestHandler.LastError;
+            if (ex == null)
+                return null;
+			return new Exception(ex.Message, ex.InnerException ?? default(Exception))
+            {
+                Source = ex.Source,
+                HResult = ex.HResult,
+                HelpLink = ex.HelpLink
+            };
         }
     }
 }

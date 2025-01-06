@@ -49,6 +49,12 @@ namespace Mahi.Settings
 					case "routes":
 						config.Routes = ReadRouteDictionary((YamlMappingNode)entry.Value);
 						break;
+					case "notextentioninurl":
+						config.NotExtentionInUrl = bool.Parse(((YamlScalarNode)entry.Value).Value);
+						break;
+					case "errorpages":
+						config.ErrorPages = ReadDictionary((YamlMappingNode)entry.Value);
+						break;
 					default:
 						// Handle unknown properties if necessary
 						break;

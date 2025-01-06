@@ -25,6 +25,7 @@ namespace Mahi.Core
 
 				// register html helpers
 				lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
+				lua.RegisterFunction("safe", builtInFunctions, typeof(BuiltInFunctions).GetMethod("safe"));
 
 				// register response helpers
 				lua.RegisterFunction("log", builtInFunctions, typeof(BuiltInFunctions).GetMethod("log"));
@@ -35,6 +36,7 @@ namespace Mahi.Core
 				lua.RegisterFunction("deleteCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("deleteCookie"));
 				lua.RegisterFunction("create_mssql_connection", builtInFunctions, typeof(BuiltInFunctions).GetMethod("create_mssql_connection"));
 				lua.RegisterFunction("isNullOrEmpty", builtInFunctions, typeof(BuiltInFunctions).GetMethod("isNullOrEmpty"));
+				lua.RegisterFunction("getLastError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getLastError"));
 
 				// contains key built in function
 				lua.DoString("function containsKey(table, key) return table[key] ~= nil end");
@@ -61,7 +63,11 @@ namespace Mahi.Core
 
 				lua["appconfig"] = new
 				{
-					connectionStrings = ConvertDictionaryToLuaTable(lua, config.ConnectionStrings)
+					connectionStrings = ConvertDictionaryToLuaTable(lua, config.ConnectionStrings),
+					defaultPages = ConvertArrayToLuaTable(lua, config.DefaultPages),
+					extentionRequired = config.ExtentionRequired,
+					notExtentionInUrl = config.NotExtentionInUrl,
+					errorPages = ConvertDictionaryToLuaTable(lua, config.ErrorPages)
 				};
 
 				string name = '_' + Guid.NewGuid().ToString().Substring(0, 4);
@@ -72,7 +78,7 @@ namespace Mahi.Core
 			}
 		}
 
-		public static LuaTable ConvertArrayToLuaTable(Lua lua, int[] array)
+		public static LuaTable ConvertArrayToLuaTable(Lua lua, object[] array)
 		{
 			var table = lua.DoString("return {}")[0] as LuaTable;
 
