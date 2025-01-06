@@ -12,5 +12,6 @@ namespace Mahi.Settings
 		public string Url { get; set; }
 		public string RoutePath { get; set; }
 		public string Default { get; set; }
+		public string Redirect { get; internal set; }
 	}
 }

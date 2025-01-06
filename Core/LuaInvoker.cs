@@ -51,8 +51,8 @@ namespace Mahi.Core
 					httpVersion = request.HttpVersion,
 					headers = ConvertDictionaryToLuaTable(lua, request.Headers.ToDictionary(i => i.Name, i => i.Value)),
 					cookies = ConvertDictionaryToLuaTable(lua, request.Cookies.ToDictionary(i => i.Name, i => i.Value)),
-					post = ConvertDictionaryToLuaTable(lua, request.RequestParameters),
-					get = ConvertDictionaryToLuaTable(lua, request.UrlParameters),
+					post = ConvertNameValueCollectionToLuaTable(lua, request.RequestParameters),
+					get = ConvertNameValueCollectionToLuaTable(lua, request.UrlParameters),
 					isMultipartRequest = request.IsMultipartRequest,
 					content = request.Content,
 					items = request.Items,
@@ -95,13 +95,16 @@ namespace Mahi.Core
 		{
 			var table = lua.DoString("return {}")[0] as LuaTable;
 
+			if (dictionary == null)
+				return table;
+
 			foreach (var kvp in dictionary)
 				table[kvp.Key.Replace('.', '_')] = kvp.Value;
 
 			return table;
 		}
 
-		public static LuaTable ConvertDictionaryToLuaTable(Lua lua, NameValueCollection collection)
+		public static LuaTable ConvertNameValueCollectionToLuaTable(Lua lua, NameValueCollection collection)
 		{
 			var table = lua.DoString("return {}")[0] as LuaTable;
 

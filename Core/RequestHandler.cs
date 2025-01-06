@@ -31,8 +31,10 @@ namespace Mahi.Core
 
 							HandleContext(request, response, stream);
 
-							if (AppConfig.Instance.ErrorPages.TryGetValue(response.StatusCode.ToString(), out string page))
+							if (response.StatusCode != 200)
 							{
+								AppConfig.Instance.ErrorPages.TryGetValue(response.StatusCode.ToString(), out string page);
+
 								if (response.StatusCode == 404 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
 								{
 									response.StatusText = "Not Found";
@@ -103,32 +105,44 @@ namespace Mahi.Core
 				}
 			}
 
-			string filename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/').Replace('/', '\\');
-
-			if (!File.Exists(filename))
+			string filename;
+			if (RouteUri.TryFindRoute(request.Uri, out filename))
 			{
-				string newFilename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/').Replace('/', '\\') + ".htmlua";
-				if (!AppConfig.Instance.ExtentionRequired && !File.Exists(newFilename))
+				if (filename.StartsWith("~")) // redirect
+				{
+					response.StatusCode = 302;
+					response.Headers.Add("Location", (filename.StartsWith("~/") ? "" : "/") + filename.Trim('~'));
+				}
+				else // route to file
+					filename = Path.GetFullPath("wwwapp") + '\\' + filename.Trim('/').Replace('/', '\\');
+			}
+			else
+			{
+				if (!File.Exists(filename))
+				{
+					string newFilename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/').Replace('/', '\\') + ".htmlua";
+					if (!AppConfig.Instance.ExtentionRequired && !File.Exists(newFilename))
+					{
+						response.StatusCode = 404;
+						LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
+						return;
+					}
+					filename = newFilename;
+				}
+				else if (!filename.EndsWith(".htmlua"))
+				{
+					// Returning file
+					response.Headers.Add("content-type", MimeTypeHelper.GetMimeType(filename));
+					stream.Write(File.ReadAllBytes(filename));
+					return;
+				}
+				else if ((AppConfig.Instance.ExtentionRequired && request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && AppConfig.Instance.ExtentionRequired))
+					|| (!defaultPageFound && !AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && request.Uri.AbsolutePath.EndsWith(".htmlua")))
 				{
 					response.StatusCode = 404;
 					LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
 					return;
 				}
-				filename = newFilename;
-			}
-			else if (!filename.EndsWith(".htmlua"))
-			{
-				// Returning file
-				response.Headers.Add("content-type", MimeTypeHelper.GetMimeType(filename));
-				stream.Write(File.ReadAllBytes(filename));
-				return;
-			}
-			else if ((AppConfig.Instance.ExtentionRequired && request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && AppConfig.Instance.ExtentionRequired))
-				|| (!defaultPageFound && !AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && request.Uri.AbsolutePath.EndsWith(".htmlua")))
-			{
-				response.StatusCode = 404;
-				LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
-				return;
 			}
 
 			try

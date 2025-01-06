@@ -61,6 +61,11 @@ namespace Mahi.Settings
 				}
 			}
 
+			if (config.Routes == null)
+				config.Routes = new Dictionary<string, Route>();
+			if (config.ErrorPages == null)
+				config.ErrorPages = new Dictionary<string, string>();
+
 			return config;
 		}
 
@@ -98,7 +103,8 @@ namespace Mahi.Settings
 				{
 					Type = routeNode["type"].ToString(),
 					Url = routeNode["url"].ToString(),
-					RoutePath = routeNode["route"].ToString(),
+					RoutePath = routeNode.Children.ContainsKey("route") ? routeNode["route"].ToString() : null,
+					Redirect = routeNode.Children.ContainsKey("redirect") ? routeNode["redirect"].ToString() : null,
 					Default = routeNode.Children.ContainsKey("default") ? routeNode["default"].ToString() : null
 				};
 
