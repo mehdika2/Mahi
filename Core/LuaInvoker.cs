@@ -18,6 +18,8 @@ namespace Mahi.Core
 		{
 			using (Lua lua = new Lua())
 			{
+				lua.State.Encoding = Encoding.UTF8;
+
 				var builtInFunctions = new BuiltInFunctions(lua, response);
 
 				// register import
@@ -36,7 +38,8 @@ namespace Mahi.Core
 				lua.RegisterFunction("deleteCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("deleteCookie"));
 				lua.RegisterFunction("create_mssql_connection", builtInFunctions, typeof(BuiltInFunctions).GetMethod("create_mssql_connection"));
 				lua.RegisterFunction("isNullOrEmpty", builtInFunctions, typeof(BuiltInFunctions).GetMethod("isNullOrEmpty"));
-				lua.RegisterFunction("getLastError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getLastError"));
+				lua.RegisterFunction("getError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getError"));
+				lua.RegisterFunction("clearError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("clearError"));
 
 				// contains key built in function
 				lua.DoString("function containsKey(table, key) return table[key] ~= nil end");

@@ -30,6 +30,22 @@ namespace Mahi.Core
 							var stream = response.ResponseStream;
 
 							HandleContext(request, response, stream);
+
+							if (AppConfig.Instance.ErrorPages.TryGetValue(response.StatusCode.ToString(), out string page))
+							{
+								if (response.StatusCode == 404 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
+								{
+									response.StatusText = "Not Found";
+									stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Page not found.")));
+									continue;
+								}
+
+								if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page.EndsWith(".htmlua"))
+									page = page.Remove(page.Length - 7, 7);
+
+								response.StatusCode = 302;
+								response.Headers.Add("Location", '/' + page.Trim('/'));
+							}
 						}
 						catch (Exception ex)
 						{
@@ -82,8 +98,7 @@ namespace Mahi.Core
 				if (!defaultPageFound)
 				{
 					response.StatusCode = 404;
-					response.StatusText = "Not Found";
-					stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Defaul page not found.")));
+					LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
 					return;
 				}
 			}
@@ -96,8 +111,7 @@ namespace Mahi.Core
 				if (!AppConfig.Instance.ExtentionRequired && !File.Exists(newFilename))
 				{
 					response.StatusCode = 404;
-					response.StatusText = "Not Found";
-					stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Defaul page not found.")));
+					LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
 					return;
 				}
 				filename = newFilename;
@@ -109,32 +123,11 @@ namespace Mahi.Core
 				stream.Write(File.ReadAllBytes(filename));
 				return;
 			}
-			else if (AppConfig.Instance.ExtentionRequired)
-			{
-				if (request.Uri.AbsolutePath.EndsWith(".htmlua"))
-				{
-					response.StatusCode = 404;
-					response.StatusText = "Not Found";
-					stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Defaul page not found.")));
-					return;
-				}
-				else
-				{
-					if (!File.Exists(filename) && AppConfig.Instance.ExtentionRequired)
-					{
-						response.StatusCode = 404;
-						response.StatusText = "Not Found";
-						stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Defaul page not found.")));
-						return;
-					}
-
-				}
-			}
-			else if (!defaultPageFound && !AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && request.Uri.AbsolutePath.EndsWith(".htmlua"))
+			else if ((AppConfig.Instance.ExtentionRequired && request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && AppConfig.Instance.ExtentionRequired))
+				|| (!defaultPageFound && !AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && request.Uri.AbsolutePath.EndsWith(".htmlua")))
 			{
 				response.StatusCode = 404;
-				response.StatusText = "Not Found";
-				stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Defaul page not found.")));
+				LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
 				return;
 			}
 
@@ -147,14 +140,10 @@ namespace Mahi.Core
 			}
 			catch (LuaScriptException ex)
 			{
-				response.StatusCode = 500;
-				response.StatusText = "Internal Server Error";
 				HandleException(ex.InnerException ?? ex, response);
 			}
 			catch (Exception ex)
 			{
-				response.StatusCode = 500;
-				response.StatusText = "Internal Server Error";
 				HandleException(ex, response);
 			}
 		}
@@ -181,6 +170,10 @@ namespace Mahi.Core
 			if (AppConfig.Instance.ErrorPages.TryGetValue("500", out page))
 			{
 				response.StatusCode = 302;
+
+				if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page.EndsWith(".htmlua"))
+					page = page.Remove(page.Length - 7, 7);
+
 				response.Headers.Add("Location", page);
 				return;
 			}

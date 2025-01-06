@@ -100,7 +100,7 @@ namespace Mahi.Core
             return string.IsNullOrWhiteSpace(input);
         }
 
-        public Exception getLastError()
+        public Exception getError()
         {
             var ex = RequestHandler.LastError;
             if (ex == null)
@@ -112,5 +112,10 @@ namespace Mahi.Core
                 HelpLink = ex.HelpLink
             };
         }
-    }
+
+        public void clearError()
+        {
+            RequestHandler.LastError = null;
+        }
+	}
 }

@@ -10,7 +10,7 @@ namespace Mahi.Settings
 {
     public class AppConfig
     {
-        private const string _filePath = "appconfig.yaml";
+        private const string _filePath = "appconfig.yml";
         private static FileSystemWatcher _fileWatcher;
 
         public string[] DefaultPages { get; set; }
