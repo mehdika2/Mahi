@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 using Fardin;
 using NLua;
-using Mahi.HtmLua;
 using System.Data.SqlClient;
 using System.Collections.Specialized;
 
 namespace Mahi.Core
 {
-	public static class LuaInvoker
+    public static class LuaInvoker
 	{
 		public static void Run(string script, MemoryStream stream, HttpRequest request, HttpResponse response)
 		{

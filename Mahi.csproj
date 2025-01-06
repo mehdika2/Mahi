@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,9 +16,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="publish\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="publish\**" />
+    <None Remove="bin\**" />
+    <None Remove="publish\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="newtonsoft.json" Version="13.0.3" />
     <PackageReference Include="nlua" Version="1.7.3" />
     <PackageReference Include="system.data.sqlclient" Version="4.9.0" />
+    <PackageReference Include="yamldotnet" Version="16.3.0" />
   </ItemGroup>
 
   <ItemGroup>

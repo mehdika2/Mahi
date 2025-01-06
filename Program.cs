@@ -10,14 +10,15 @@ using NLua;
 using Mahi.HtmLua;
 using System.Runtime.Versioning;
 using Mahi.Properties;
-using static Mahi.Core.Logger;
+using static Mahi.Logger;
 using Mahi.Core;
 
 using CookieCollection = Fardin.CookieCollection;
+using Mahi.Settings;
 
 namespace Mahi
 {
-	internal class Program
+    internal class Program
 	{
 		const string ip = "127.0.0.1";
 		const int port = 1010;
@@ -30,7 +31,14 @@ namespace Mahi
 
 			// installing default modules
 			InstallModules();
+			
+			// load settings
+			AppConfig.LoadConfigs();
 
+			// watch appconfig.yaml
+			AppConfig.StartConfigWatcher();
+
+			// start server
 			var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
 			//var server = new HttpServer(IPAddress.Parse(ip), port);
 			server.BaseDirectory = "wwwapp";
