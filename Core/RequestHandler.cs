@@ -119,7 +119,7 @@ namespace Mahi.Core
 				try
 				{
 					object[] result = LuaInvoker.Run(File.ReadAllText(modulePath), stream, request, response) as object[];
-					if (result != null && (bool)result[0])
+					if (result != null && result.Length > 0 && (bool)result[0])
 						return;
 				}
 				catch (LuaScriptException ex)

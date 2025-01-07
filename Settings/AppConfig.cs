@@ -40,6 +40,7 @@ namespace Mahi.Settings
 		{
 			if (!File.Exists(_filename))
 				throw new FileNotFoundException(_filename + " config file not found!");
+
 			_instance = ConfigParser.ParseYaml(File.ReadAllText(_filename));
 		}
 

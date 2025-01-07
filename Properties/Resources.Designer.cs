@@ -70,26 +70,6 @@ namespace Mahi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] dkjson {
-            get {
-                object obj = ResourceManager.GetObject("dkjson", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] hash {
-            get {
-                object obj = ResourceManager.GetObject("hash", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html lang=&quot;en&quot; dir=&quot;lrt&quot;&gt;
         ///&lt;head&gt;
@@ -134,26 +114,6 @@ namespace Mahi.Properties {
         internal static string Http500 {
             get {
                 return ResourceManager.GetString("Http500", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] mssql {
-            get {
-                object obj = ResourceManager.GetObject("mssql", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] setting {
-            get {
-                object obj = ResourceManager.GetObject("setting", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         

@@ -90,6 +90,7 @@ namespace Mahi.Core
             response.Cookies.RemoveCookie(name);
         }
 
+        [Obsolete]
         public SqlConnection create_mssql_connection(string connectionString)
         {
             return new SqlConnection(connectionString);

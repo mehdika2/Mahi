@@ -1,19 +1,10 @@
-﻿using System.IO.Compression;
-using System.Net;
-using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 
 using Fardin;
-using NLua;
-using Mahi.HtmLua;
-using System.Runtime.Versioning;
 using Mahi.Properties;
-using static Mahi.Logger;
 using Mahi.Core;
 
-using CookieCollection = Fardin.CookieCollection;
 using Mahi.Settings;
 
 namespace Mahi
@@ -26,12 +17,7 @@ namespace Mahi
 
 		static void Main()
 		{
-			// ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-			Console.Title = "Mahi1.0.0";
-
-			// installing default
-			// 
-			InstallLibraries();
+			Console.Title = "Mahi 1.0";
 			
 			// load settings
 			AppConfig.LoadConfigs();
@@ -60,25 +46,6 @@ namespace Mahi
 			RequestHandler.Process(server);
 
 			logger.Dispose();
-		}
-
-		static void InstallLibraries()
-		{
-			string moduesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "libraries");
-			if (!Directory.Exists(moduesDirectory))
-				Directory.CreateDirectory(moduesDirectory);
-
-			string jsonModulePath = Path.Combine(moduesDirectory, "json.lua");
-			if (!File.Exists(jsonModulePath))
-				File.WriteAllText(jsonModulePath, Encoding.UTF8.GetString(Resources.dkjson));
-
-			string mssqlModulePath = Path.Combine(moduesDirectory, "mssql.lua");
-			if (!File.Exists(mssqlModulePath))
-				File.WriteAllText(mssqlModulePath, Encoding.UTF8.GetString(Resources.mssql));
-
-			string hashModulePath = Path.Combine(moduesDirectory, "hash.lua");
-			if (!File.Exists(hashModulePath))
-				File.WriteAllText(hashModulePath, Encoding.UTF8.GetString(Resources.hash));
 		}
 
 		internal static void Log(string message, bool newLine = true)
