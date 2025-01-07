@@ -18,20 +18,26 @@ namespace Mahi.Core
 				switch (route.Value.Type.ToLower())
 				{
 					case "regex":
-						if(Regex.Match(uri.AbsoluteUri, route.Value.Url).Success)
+						if (Regex.Match(uri.AbsoluteUri, route.Value.Url).Success)
 						{
 							if (route.Value.RoutePath != null)
 								filename = route.Value.RoutePath;
 							else if (route.Value.Redirect != null)
 								filename = "~" + route.Value.Redirect;
-							else throw new InvalidDataException("No route or redirect path set for route: " + route.Key);
+							else throw new InvalidDataException("No route or redirect path set for regex route: " + route.Key);
 							return true;
 						}
 						break;
 
 					case "static":
-
-						break;
+						if (uri.AbsolutePath.ToLower() != route.Value.Url.ToLower())
+							break;
+						if (route.Value.RoutePath != null)
+							filename = route.Value.RoutePath;
+						else if (route.Value.Redirect != null)
+							filename = "~" + route.Value.Redirect;
+						else throw new InvalidDataException("No route or redirect path set for static route: " + route.Key);
+						return true;
 
 					case "dynamic":
 
