@@ -55,6 +55,9 @@ namespace Mahi.Settings
 					case "errorpages":
 						config.ErrorPages = ReadDictionary((YamlMappingNode)entry.Value);
 						break;
+					case "httpmodules":
+						config.HttpModules = ReadDictionary((YamlMappingNode)entry.Value);
+						break;
 					default:
 						// Handle unknown properties if necessary
 						break;
@@ -65,6 +68,8 @@ namespace Mahi.Settings
 				config.Routes = new Dictionary<string, Route>();
 			if (config.ErrorPages == null)
 				config.ErrorPages = new Dictionary<string, string>();
+			if (config.HttpModules == null)
+				config.HttpModules = new Dictionary<string, string>();
 
 			return config;
 		}
@@ -105,7 +110,7 @@ namespace Mahi.Settings
 					Url = routeNode["url"].ToString(),
 					RoutePath = routeNode.Children.ContainsKey("route") ? routeNode["route"].ToString() : null,
 					Redirect = routeNode.Children.ContainsKey("redirect") ? routeNode["redirect"].ToString() : null,
-					Default = routeNode.Children.ContainsKey("default") ? routeNode["default"].ToString() : null
+					Controller = routeNode.Children.ContainsKey("controller") ? routeNode["controller"].ToString() : null
 				};
 
 				routes[key] = route;

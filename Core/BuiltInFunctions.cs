@@ -49,16 +49,16 @@ namespace Mahi.Core
             response.StatusText = text;
         }
 
-        public object import(string module)
+        public object import(string librariy)
         {
             try
             {
                 // Use Lua's require function and return the result.
-                return lua.DoString($"return require('modules.{module}')")[0];
+                return lua.DoString($"return require('libraries.{librariy}')")[0];
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error importing module '{module}': {ex.Message}");
+                Console.WriteLine($"Error importing libraries '{librariy}': {ex.Message}");
                 return null;
             }
         }

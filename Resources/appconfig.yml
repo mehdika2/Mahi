@@ -12,23 +12,32 @@ NotExtentionInUrl: true
 ConnectionStrings:
   DefaultContext: 'server=.; database=MyDB; integrated security=true;'
 
+# The target file will execute when ever a request receive
+# To prevent render the file requested, must write `return true` in the module
+HttpModules:
+  SessionManager: '/session_manager.lua'
+
 # Routes
 Routes:
-  admin:
-    type: regex
-    url: '/admin*'
-    route: '/manage/admin-manager.htmlua'
+  Admin:
+    Type: Regex
+    Url: '/admin*'
+    Redirect: '/manage/admin-manager.htmlua'
     
-  default:
-    type: static
-    url: '/css/dynamic.css'
-    route: '/dynamic-css.htmlua'
+  Default:
+    Type: Static
+    Url: '/css/dynamic.css'
+    Route: '/dynamic-css.htmlua'
     
-  product:
-    type: multiple
-    url: '/product/{action}'
-    route: '/product/{action}.htmlua'
-    default: '/product/list.htmlua'
+  User:
+    Type: Dynamic
+    Url: '/admin/{controller}/{action}'
+    Route: '/admin/{controller}/{action}.htmlua'
+
+  API:
+    Type: Static
+    Url: '/api/time'
+    Controller: '/api/time.lua'
 
 # Custom error pages
 ErrorPages:

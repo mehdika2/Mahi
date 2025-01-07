@@ -29,8 +29,9 @@ namespace Mahi
 			// ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 			Console.Title = "Mahi1.0.0";
 
-			// installing default modules
-			InstallModules();
+			// installing default
+			// 
+			InstallLibraries();
 			
 			// load settings
 			AppConfig.LoadConfigs();
@@ -39,8 +40,8 @@ namespace Mahi
 			AppConfig.StartConfigWatcher();
 
 			// start server
-			var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
-			//var server = new HttpServer(IPAddress.Parse(ip), port);
+			//var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
+			var server = new HttpServer(IPAddress.Parse(ip), port);
 			server.BaseDirectory = "wwwapp";
 
 			try
@@ -61,9 +62,9 @@ namespace Mahi
 			logger.Dispose();
 		}
 
-		static void InstallModules()
+		static void InstallLibraries()
 		{
-			string moduesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "modules");
+			string moduesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "libraries");
 			if (!Directory.Exists(moduesDirectory))
 				Directory.CreateDirectory(moduesDirectory);
 

@@ -19,6 +19,7 @@ namespace Mahi.Settings
 		public Dictionary<string, string> ConnectionStrings { get; set; }
 		public Dictionary<string, Route> Routes { get; set; }
 		public Dictionary<string, string> ErrorPages { get; internal set; }
+		public Dictionary<string, string> HttpModules { get; internal set; }
 
 		private static AppConfig _instance;
 		private static readonly object _lock = new object();

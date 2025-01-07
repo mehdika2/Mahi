@@ -12,6 +12,7 @@ using Mahi.Properties;
 using NLua.Exceptions;
 using Mahi.Settings;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Mahi.Core
 {
@@ -42,7 +43,12 @@ namespace Mahi.Core
 									continue;
 								}
 
-								if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page.EndsWith(".htmlua"))
+								int redirectCode = response.StatusCode - 300;
+								if (redirectCode >= 0 && redirectCode < 100)
+									// redirected before
+									continue;
+
+								if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page != null && page.EndsWith(".htmlua"))
 									page = page.Remove(page.Length - 7, 7);
 
 								response.StatusCode = 302;
@@ -85,7 +91,7 @@ namespace Mahi.Core
 			}
 			Program.Log(log += request.Method + " &r" + request.Uri.AbsolutePath);
 
-			// Routing in config ...
+			// Default pages
 			bool defaultPageFound = false;
 			if (request.Uri.AbsolutePath == "/")
 			{
@@ -105,16 +111,58 @@ namespace Mahi.Core
 				}
 			}
 
+			// Http modules first
+			var httpModules = AppConfig.Instance.HttpModules;
+			foreach (var httpModule in httpModules)
+			{
+				string modulePath = Path.Combine(Directory.GetCurrentDirectory(), "modules", httpModule.Value.Trim('~').Replace('/', '\\').Trim('\\'));
+				try
+				{
+					object[] result = LuaInvoker.Run(File.ReadAllText(modulePath), stream, request, response) as object[];
+					if (result != null && (bool)result[0])
+						return;
+				}
+				catch (LuaScriptException ex)
+				{
+					HandleException(ex.InnerException ?? ex, response);
+					return;
+				}
+				catch (Exception ex)
+				{
+					HandleException(ex, response);
+					return;
+				}
+			}
+
+			// Routing by config
 			string filename;
 			if (RouteUri.TryFindRoute(request.Uri, out filename))
 			{
-				if (filename.StartsWith("~")) // redirect
+				if (filename.StartsWith(">")) // redirect
 				{
 					response.StatusCode = 302;
-					response.Headers.Add("Location", (filename.StartsWith("~/") ? "" : "/") + filename.Trim('~'));
+					response.Headers.Add("Location", (filename.StartsWith(">/") ? "" : "/") + filename.Trim('>'));
+					return;
+				}
+				else if (filename.StartsWith("="))
+				{
+					filename = Path.Combine(Directory.GetCurrentDirectory(), "controllers", filename.Trim('=').Replace('/', '\\').Trim('\\'));
+					try
+					{
+						LuaInvoker.Run(File.ReadAllText(filename), stream, request, response);
+					}
+					catch (LuaScriptException ex)
+					{
+						HandleException(ex.InnerException ?? ex, response);
+					}
+					catch (Exception ex)
+					{
+						HandleException(ex, response);
+					}
+					return;
 				}
 				else // route to file
-					filename = Path.GetFullPath("wwwapp") + '\\' + filename.Trim('/').Replace('/', '\\');
+					filename = Path.Combine(Directory.GetCurrentDirectory(), "wwwapp", filename.Trim('/').Replace('/', '\\'));
 			}
 			else
 			{
@@ -145,6 +193,7 @@ namespace Mahi.Core
 				}
 			}
 
+			// Run htmlua scripts
 			try
 			{
 				HtmLuaParser htmluaParser = new HtmLuaParser();
