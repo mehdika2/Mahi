@@ -145,5 +145,25 @@ namespace Mahi.Core
                 return value;
             return null;
         }
+
+        public byte[] base64_decode(string input)
+        {
+            return Convert.FromBase64String(input);
+        }
+
+        public string base64_decode(byte[] bytes)
+        {
+			return Convert.ToBase64String(bytes);
+		}
+
+        public byte[] utf_encode(string input)
+        {
+			return Encoding.UTF8.GetBytes(input);
+		}
+
+		public string utf_decode(byte[] bytes)
+        {
+            return Encoding.UTF8.GetString(bytes);
+        }
 	}
 }

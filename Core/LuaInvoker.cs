@@ -98,6 +98,12 @@ namespace Mahi.Core
 			lua.RegisterFunction("getError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getError"));
 			lua.RegisterFunction("clearError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("clearError"));
 
+			// register encoding functions
+			lua.RegisterFunction("base64_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_decode"));
+			lua.RegisterFunction("base64_encode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_encode"));
+			lua.RegisterFunction("utf_encode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_encode"));
+			lua.RegisterFunction("utf_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_decode"));
+
 			// contains key built in function
 			lua.DoString("function containsKey(table, key) return table[key] ~= nil end");
 

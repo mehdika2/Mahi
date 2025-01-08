@@ -62,6 +62,7 @@ namespace Mahi.Core
 									continue;
 								}
 
+
 								try
 								{
 									HtmLuaParser htmluaParser = new HtmLuaParser();
