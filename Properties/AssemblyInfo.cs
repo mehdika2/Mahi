@@ -1,11 +1,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Mahi Framework")]
-[assembly: AssemblyDescription("Mahi web development framework using lua")]
+[assembly: AssemblyTitle("Mahi Interpreter")]
+[assembly: AssemblyDescription("Mahi web development interpreter using lua")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Mahi Framework")]
+[assembly: AssemblyProduct("Mahi Interpreter")]
 [assembly: AssemblyCopyright("Copyright © Fardin 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

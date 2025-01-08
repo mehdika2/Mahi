@@ -70,6 +70,34 @@ namespace Mahi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No template found with name {0}.
+        /// </summary>
+        internal static string Error_CreateTemplateNameNotFound {
+            get {
+                return ResourceManager.GetString("Error_CreateTemplateNameNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should give a template name after -t
+        ///  To see available templates enter -t -l.
+        /// </summary>
+        internal static string Error_CreateTemplateNameRequired {
+            get {
+                return ResourceManager.GetString("Error_CreateTemplateNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Currently there&apos;s template files exists, to force override on existing file put -f options after template name.
+        /// </summary>
+        internal static string Error_CreateTemplateNeedToForce {
+            get {
+                return ResourceManager.GetString("Error_CreateTemplateNeedToForce", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html lang=&quot;en&quot; dir=&quot;lrt&quot;&gt;
         ///&lt;head&gt;
@@ -114,6 +142,15 @@ namespace Mahi.Properties {
         internal static string Http500 {
             get {
                 return ResourceManager.GetString("Http500", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Template create successfully..
+        /// </summary>
+        internal static string Message_CreateTemplateSuccess {
+            get {
+                return ResourceManager.GetString("Message_CreateTemplateSuccess", resourceCulture);
             }
         }
         

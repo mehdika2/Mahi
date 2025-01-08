@@ -173,4 +173,17 @@
 &lt;/body&gt;
 &lt;/html&gt;</value>
   </data>
+  <data name="Error_CreateTemplateNameRequired" xml:space="preserve">
+    <value>You should give a template name after -t
+  To see available templates enter -t -l</value>
+  </data>
+  <data name="Error_CreateTemplateNameNotFound" xml:space="preserve">
+    <value>No template found with name {0}</value>
+  </data>
+  <data name="Error_CreateTemplateNeedToForce" xml:space="preserve">
+    <value>Currently there's template files exists, to force override on existing file put -f options after template name</value>
+  </data>
+  <data name="Message_CreateTemplateSuccess" xml:space="preserve">
+    <value>Template create successfully.</value>
+  </data>
 </root>

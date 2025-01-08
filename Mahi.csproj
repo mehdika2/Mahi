@@ -5,6 +5,17 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/mehdika2/mahi</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/mehdika2/mahi</PackageProjectUrl>
+    <PackageIcon>mahi.png</PackageIcon>
+    <Copyright>Copyright © Fardin 2024</Copyright>
+    <Description>Mahi web development framework using lua</Description>
+    <Title>Mahi Interpreter</Title>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,11 +28,22 @@
 
   <ItemGroup>
     <Compile Remove="bin\**" />
+    <Compile Remove="examples\**" />
     <Compile Remove="publish\**" />
     <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="examples\**" />
     <EmbeddedResource Remove="publish\**" />
     <None Remove="bin\**" />
+    <None Remove="examples\**" />
     <None Remove="publish\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\authentication.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\authentication.zip" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,6 +70,21 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="images\mahi.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

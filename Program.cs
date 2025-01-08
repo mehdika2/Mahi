@@ -18,6 +18,10 @@ namespace Mahi
 		static void Main()
 		{
 			Console.Title = "Mahi 1.0";
+
+			// true means that created a template successfully
+			if (Templates.Template.CreateFromArguments())
+				return;
 			
 			// load settings
 			AppConfig.LoadConfigs();
