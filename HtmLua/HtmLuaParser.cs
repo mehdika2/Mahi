@@ -272,9 +272,7 @@ namespace Mahi.HtmLua
 						if (openParentheses == 0)
 						{
 							script += current;
-
-							//! May need to execute
-							//position++;
+							position++;
 
 							//! May need check if not AtEnd here
 							StartGo();

@@ -20,13 +20,15 @@ namespace Mahi.Core
     {
         public string _html = string.Empty;
         private Lua lua;
+        private HttpRequest request;
         private HttpResponse response;
 
-        public BuiltInFunctions(Lua lua, HttpResponse response)
+        public BuiltInFunctions(Lua lua, HttpRequest request, HttpResponse response)
         {
             this.lua = lua;
+            this.request = request;
             this.response = response;
-        }
+		}
 
         public void go(object html)
         {
@@ -117,6 +119,31 @@ namespace Mahi.Core
         public void clearError()
         {
             RequestHandler.LastError = null;
+        }
+
+        static Dictionary<string, object> temp = new Dictionary<string, object>();
+        public void setTemp(string name, object value)
+        {
+            temp[name] = value;
+        }
+
+        public object getTemp(string name)
+		{
+			if (temp.TryGetValue(name, out var value))
+				return value;
+            return null;
+        }
+
+        public void setItem(string name, object value)
+        {
+            request.Items[name] = value;
+        }
+
+        public object getItem(string name)
+        {
+            if (request.Items.TryGetValue(name, out var value))
+                return value;
+            return null;
         }
 	}
 }

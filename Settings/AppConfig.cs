@@ -18,6 +18,7 @@ namespace Mahi.Settings
 		public bool NotExtentionInUrl { get; set; }
 		public Dictionary<string, string> ConnectionStrings { get; set; }
 		public Dictionary<string, Route> Routes { get; set; }
+		public bool RedirectErrorPage { get; set; }
 		public Dictionary<string, string> ErrorPages { get; internal set; }
 		public Dictionary<string, string> HttpModules { get; internal set; }
 
@@ -34,7 +35,6 @@ namespace Mahi.Settings
 				}
 			}
 		}
-
 
 		public static void LoadConfigs()
 		{

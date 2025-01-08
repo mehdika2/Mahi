@@ -1,6 +1,6 @@
 # List of urls to redirect to if request url was `/`
 DefaultPages:
-  - index
+  - index.htmlua
 
 # Allows to run file without adding .htmlua after filename if set true
 ExtentionRequired: false
@@ -8,38 +8,38 @@ ExtentionRequired: false
 # Should not include .htmlua after file name if set true and ExtentionRequired should be false to works
 NotExtentionInUrl: true
 
-# # Connection string vault
-# ConnectionStrings:
-#   DefaultContext: 'server=.; database=MyDB; integrated security=true;'
+# Connection string vault
+ConnectionStrings:
+  DefaultContext: 'server=.; database=MyDB; integrated security=true;'
 
-# # The target file will execute when ever a request receive
-# # To prevent render the file requested, must write `return true` in the module
-# HttpModules:
-#   SessionManager: '/session_manager.lua'
+# The target file will execute when ever a request receive
+# To prevent render the file requested, must write `return true` in the module
+HttpModules:
+  SessionManager: '/session_manager.lua'
 
-# # Routes
-# Routes:
-#   Admin:
-#     Type: Regex
-#     Url: '/admin*'
-#     Redirect: '/manage/admin-manager.htmlua'
+# Routes
+Routes:
+  Admin:
+    Type: Regex
+    Url: '/admin*'
+    Redirect: '/manage/admin-manager.htmlua'
     
-#   Default:
-#     Type: Static
-#     Url: '/css/dynamic.css'
-#     Route: '/dynamic-css.htmlua'
+  Default:
+    Type: Static
+    Url: '/css/dynamic.css'
+    Route: '/dynamic-css.htmlua'
     
-#   User:
-#     Type: Dynamic
-#     Url: '/admin/{controller}/{action}'
-#     Route: '/admin/{controller}/{action}.htmlua'
+  User:
+    Type: Dynamic
+    Url: '/admin/{controller}/{action}'
+    Route: '/admin/{controller}/{action}.htmlua'
 
-#   API:
-#     Type: Static
-#     Url: '/api/time'
-#     Controller: '/api/time.lua'
+  API:
+    Type: Static
+    Url: '/api/time'
+    Controller: '/api/time.lua'
 
-# # Custom error pages
-# ErrorPages:
-#   404: /Error/404.htmlua
-#   500: /Error/500.htmlua
+# Custom error pages
+ErrorPages:
+  404: /Error/404.htmlua
+  500: /Error/500.htmlua

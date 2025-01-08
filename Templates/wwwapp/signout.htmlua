@@ -1,5 +1,0 @@
-${
-    
-deleteCookie('authKey')
-
-redirect('/index.htmlua')

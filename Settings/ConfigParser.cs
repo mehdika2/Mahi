@@ -43,17 +43,23 @@ namespace Mahi.Settings
 					case "extentionrequired":
 						config.ExtentionRequired = bool.Parse(((YamlScalarNode)entry.Value).Value);
 						break;
+					case "notextentioninurl":
+						config.NotExtentionInUrl = bool.Parse(((YamlScalarNode)entry.Value).Value);
+						break;
 					case "connectionstrings":
 						config.ConnectionStrings = ReadDictionary((YamlMappingNode)entry.Value);
 						break;
 					case "routes":
 						config.Routes = ReadRouteDictionary((YamlMappingNode)entry.Value);
 						break;
-					case "notextentioninurl":
-						config.NotExtentionInUrl = bool.Parse(((YamlScalarNode)entry.Value).Value);
+					case "redirecterrorcode":
+						config.RedirectErrorPage = bool.Parse(((YamlScalarNode)entry.Value).Value);
 						break;
 					case "errorpages":
 						config.ErrorPages = ReadDictionary((YamlMappingNode)entry.Value);
+						foreach (var page in config.ErrorPages)
+							if(!File.Exists(Path.GetFullPath("wwwapp") + '\\' + page.Value))
+								throw new FileNotFoundException("Cannot find error page for status code " + page.Key + " with filename: " + page.Value);
 						break;
 					case "httpmodules":
 						config.HttpModules = ReadDictionary((YamlMappingNode)entry.Value);
@@ -64,6 +70,8 @@ namespace Mahi.Settings
 				}
 			}
 
+			if (config.ExtentionRequired)
+				config.NotExtentionInUrl = false;
 			if (config.Routes == null)
 				config.Routes = new Dictionary<string, Route>();
 			if (config.ErrorPages == null)

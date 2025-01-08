@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Mahi": {
-      "commandName": "Project",
-      "commandLineArgs": "-t auth -f"
+      "commandName": "Project"
     }
   }
 }

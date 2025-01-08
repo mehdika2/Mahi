@@ -19,7 +19,7 @@ namespace Mahi.Core
 		{
 			using (var lua = new Lua())
 			{
-				var builtInFunctions = new BuiltInFunctions(lua, response);
+				var builtInFunctions = new BuiltInFunctions(lua, request, response);
 
 				RegisterBuiltInFunctions(lua, request, response, builtInFunctions);
 
@@ -79,6 +79,12 @@ namespace Mahi.Core
 			// register html helpers
 			lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
 			lua.RegisterFunction("safe", builtInFunctions, typeof(BuiltInFunctions).GetMethod("safe"));
+
+			// temp & request data
+			lua.RegisterFunction("setTemp", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setTemp"));
+			lua.RegisterFunction("getTemp", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getTemp"));
+			lua.RegisterFunction("setItem", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setItem"));
+			lua.RegisterFunction("getItem", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getItem"));
 
 			// register response helpers
 			lua.RegisterFunction("log", builtInFunctions, typeof(BuiltInFunctions).GetMethod("log"));

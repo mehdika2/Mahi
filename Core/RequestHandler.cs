@@ -38,21 +38,47 @@ namespace Mahi.Core
 
 								if (response.StatusCode == 404 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
 								{
+									response.StatusCode = 404;
 									response.StatusText = "Not Found";
-									stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}", "404 Page not found.")));
+									stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}"
+										, LastError is PageNotFoundException ? LastError.Message : "404 Page not found.")));
 									continue;
 								}
 
 								int redirectCode = response.StatusCode - 300;
 								if (redirectCode >= 0 && redirectCode < 100)
+								{
 									// redirected before
 									continue;
+								}
 
-								if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page != null && page.EndsWith(".htmlua"))
-									page = page.Remove(page.Length - 7, 7);
+								if (AppConfig.Instance.RedirectErrorPage)
+								{
+									if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page != null && page.EndsWith(".htmlua"))
+										page = page.Remove(page.Length - 7, 7);
 
-								response.StatusCode = 302;
-								response.Headers.Add("Location", '/' + page.Trim('/'));
+									response.StatusCode = 302;
+									response.Headers.Add("Location", '/' + page.Trim('/'));
+									continue;
+								}
+
+								try
+								{
+									HtmLuaParser htmluaParser = new HtmLuaParser();
+									string script = htmluaParser.ToLua(File.ReadAllText(Path.GetFullPath("wwwapp") + '\\' + page));
+
+									LuaInvoker.Run(script, stream, request, response);
+								}
+								catch (LuaScriptException ex)
+								{
+									HandleException(ex.InnerException ?? ex, response);
+								}
+								catch (Exception ex)
+								{
+									HandleException(ex, response);
+								}
+
+								continue;
 							}
 						}
 						catch (Exception ex)
@@ -93,7 +119,7 @@ namespace Mahi.Core
 
 			// Default pages
 			bool defaultPageFound = false;
-			if (request.Uri.AbsolutePath == "/")
+			if (request.Uri.AbsolutePath.Trim('/') == "")
 			{
 				foreach (var defaultPage in AppConfig.Instance.DefaultPages)
 					if (File.Exists(Path.GetFullPath("wwwapp") + '\\' + defaultPage))
@@ -106,7 +132,7 @@ namespace Mahi.Core
 				if (!defaultPageFound)
 				{
 					response.StatusCode = 404;
-					LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
+					LastError = new PageNotFoundException($"Default page file not exists!");
 					return;
 				}
 			}
@@ -168,14 +194,19 @@ namespace Mahi.Core
 			{
 				if (!File.Exists(filename))
 				{
-					string newFilename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/').Replace('/', '\\') + ".htmlua";
-					if (!AppConfig.Instance.ExtentionRequired && !File.Exists(newFilename))
+					if (AppConfig.Instance.ExtentionRequired)
 					{
 						response.StatusCode = 404;
-						LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
+						LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
 						return;
 					}
-					filename = newFilename;
+					filename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/').Replace('/', '\\') + ".htmlua";
+					if (!File.Exists(filename))
+					{
+						response.StatusCode = 404;
+						LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
+						return;
+					}
 				}
 				else if (!filename.EndsWith(".htmlua"))
 				{
@@ -184,11 +215,11 @@ namespace Mahi.Core
 					stream.Write(File.ReadAllBytes(filename));
 					return;
 				}
-				else if ((AppConfig.Instance.ExtentionRequired && request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && AppConfig.Instance.ExtentionRequired))
+				else if ((AppConfig.Instance.ExtentionRequired && !request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && AppConfig.Instance.ExtentionRequired))
 					|| (!defaultPageFound && !AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && request.Uri.AbsolutePath.EndsWith(".htmlua")))
 				{
 					response.StatusCode = 404;
-					LastError = new Exception($"Page \"{request.Uri.AbsolutePath}\" not found!");
+						LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
 					return;
 				}
 			}
@@ -232,12 +263,15 @@ namespace Mahi.Core
 			string page;
 			if (AppConfig.Instance.ErrorPages.TryGetValue("500", out page))
 			{
-				response.StatusCode = 302;
+				response.StatusCode = 500;
 
-				if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page.EndsWith(".htmlua"))
-					page = page.Remove(page.Length - 7, 7);
+				if (AppConfig.Instance.RedirectErrorPage)
+				{
+					if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page.EndsWith(".htmlua"))
+						page = page.Remove(page.Length - 7, 7);
 
-				response.Headers.Add("Location", page);
+					response.Headers.Add("Location", page);
+				}
 				return;
 			}
 
