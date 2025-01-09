@@ -151,7 +151,7 @@ namespace Mahi.Core
             return Convert.FromBase64String(input);
         }
 
-        public string base64_decode(byte[] bytes)
+        public string base64_encode(byte[] bytes)
         {
 			return Convert.ToBase64String(bytes);
 		}
