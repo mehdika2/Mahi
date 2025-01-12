@@ -13,8 +13,8 @@ namespace Mahi.Settings
 		private const string _filename = "appconfig.yml";
 		private static FileSystemWatcher _fileWatcher;
 
-        public string BaseDirectory { get; set; }
-        public string[] DefaultPages { get; set; }
+		public string BaseDirectory { get; set; }
+		public string[] DefaultPages { get; set; }
 		public bool DirectoryBrowsing { get; set; }
 		public bool ExtentionRequired { get; set; }
 		public bool NotExtentionInUrl { get; set; }
@@ -43,7 +43,14 @@ namespace Mahi.Settings
 			if (!File.Exists(_filename))
 				throw new FileNotFoundException(_filename + " config file not found!");
 
-			_instance = ConfigParser.ParseYaml(File.ReadAllText(_filename));
+			try
+			{
+				_instance = ConfigParser.ParseYaml(File.ReadAllText(_filename));
+			}
+			catch (Exception ex)
+			{
+				Program.Log("&r[&4Error&r] Faild to reload config file: " + ex.Message);
+			}
 		}
 
 		public static void StartConfigWatcher()

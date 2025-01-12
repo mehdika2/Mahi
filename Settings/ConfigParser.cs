@@ -78,6 +78,8 @@ namespace Mahi.Settings
 
 			if (config.ExtentionRequired)
 				config.NotExtentionInUrl = false;
+			if (config.DefaultPages == null)
+				config.DefaultPages = new string[0];
 			if (config.Routes == null)
 				config.Routes = new Dictionary<string, Route>();
 			if (config.ErrorPages == null)

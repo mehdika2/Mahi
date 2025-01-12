@@ -117,7 +117,6 @@ namespace Mahi.Core
 			// Default pages
 			bool defaultPageFound = false;
 			if (request.Uri.AbsolutePath.Trim('/') == "")
-			{
 				foreach (var defaultPage in config.DefaultPages)
 					if (File.Exists(Path.Combine(wwwappPath, defaultPage)))
 					{
@@ -126,13 +125,6 @@ namespace Mahi.Core
 						request.Items["R_URI"] = uriBuilder.Uri;
 						defaultPageFound = true;
 					}
-				if (!defaultPageFound)
-				{
-					response.StatusCode = 404;
-					LastError = new PageNotFoundException($"Default page file not exists!");
-					return;
-				}
-			}
 
 			// Http modules first
 			var httpModules = config.HttpModules;
@@ -178,10 +170,14 @@ namespace Mahi.Core
 							return;
 						}
 
+						string path = request.Uri.AbsolutePath.TrimEnd('/');
+						if (path == "") path = "/";
 						string rows = CreateDirectoryBrowsintTable(filename, request.Uri.AbsolutePath);
-						response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.DirectoryBrowsing.Replace("{Rows}", rows)
-							.Replace("{Directory}", request.Uri.AbsolutePath).Replace("{ParentDirectory}"
-							, Path.GetDirectoryName(request.Uri.AbsolutePath).Replace('\\', '/'))));
+						response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.DirectoryBrowsing
+							.Replace("{Rows}", rows)
+							.Replace("{Domain}", request.Uri.Host).TrimEnd('/').Replace("{Directory}", path)
+							.Replace("{ParentDirectory}", path == "/" ?
+							"" : Resources.DirectoryBrowsingParentDirectory.Replace("{ParentDirectory}", Path.GetDirectoryName(path)?.Replace('\\', '/')))));
 
 						return;
 					}
@@ -299,26 +295,26 @@ namespace Mahi.Core
 			StringBuilder sb = new StringBuilder();
 
 			string[] directories = Directory.GetDirectories(filename);
-			foreach (var directory in directories)
+			foreach (var directory in directories.Where(dir => !Path.GetFileName(dir).StartsWith(".")))
 			{
 				DirectoryInfo info = new DirectoryInfo(directory);
 				string name = Path.GetFileName(directory);
 				sb.AppendLine(@$"<tr>
     <td><img src=""/icons/folder.gif"" alt=""[DIR]""></td>
-    <td><a href=""{(path == "/" ? "" : path + "/")}{name}"">{name}/</a></td>
+    <td><a href=""{(path.EndsWith("/") ? "" : path + "/")}{name}"">{name}/</a></td>
     <td>{info.LastWriteTime.ToString("yyyy/MM/dd hh:mm")}</td>
     <td>-</td>
 </tr>");
 			}
 
 			string[] files = Directory.GetFiles(filename);
-			foreach(var  file in files)
+			foreach(var  file in files.Where(file => !Path.GetFileName(file).StartsWith(".")))
 			{
 				FileInfo info = new FileInfo(file);
 				string name = Path.GetFileName(file);
 				sb.AppendLine(@$"<tr>
-    <td><img src=""/icons/layout.gif"" alt=""[DIR]""></td>
-    <td><a href=""{(path == "/" ? "" : path + "/")}{name}"">{name}</a></td>
+    <td><img src=""/icons/layout.gif"" alt=""[FILE]""></td>
+    <td><a href=""{(path.EndsWith("/") ? path : path + "/")}{name}"">{name}</a></td>
     <td>{info.LastWriteTime.ToString("yyyy/MM/dd hh:mm")}</td>
     <td>{FormatSize(info.Length)}</td>
 </tr>");

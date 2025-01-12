@@ -72,34 +72,49 @@ namespace Mahi.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE HTML&gt;
         ///&lt;html&gt;
-        /// &lt;head&gt;
+        ///&lt;head&gt;
         ///  &lt;title&gt;Directory {Directory}&lt;/title&gt;
         ///  &lt;style&gt;
-        ///    td:not(:first-child){
-        ///        padding-left: 1rem;
-        ///        padding-right: 1rem;
+        ///    table {
+        ///      border-collapse: collapse;
+        ///    }
+        ///    td:not(:first-child) {
+        ///      padding-left: 1rem;
+        ///      padding-right: 1rem;
         ///    }
         ///    th {
-        ///        text-align: left;
-        ///        padding-left: 1rem;
-        ///        padding-right: 1rem;
-        ///        border-bottom: 2px solid gray;
+        ///      background-color: #f2f2f2;
+        ///      text-align: left;
+        ///      padding-left: 1rem;
+        ///      padding-right: 1rem;
+        ///      border-bottom: 2px solid gray;
+        ///    }
+        ///    th,
+        ///    td {
+        ///      border: 1px solid #ddd;
+        ///      padding: 8px;
+        ///      text-align: left;
         ///    }
         ///  &lt;/style&gt;
-        /// &lt;/head&gt;
-        /// &lt;body&gt;
-        ///&lt;h1&gt;Directory {Directory}&lt;/h1&gt;
-        ///&lt;table&gt;
-        ///    &lt;tbody&gt;
-        ///        &lt;tr&gt;
-        ///            &lt;th&gt;&lt;/th&gt;
-        ///            &lt;th&gt;Name&lt;/th&gt;
-        ///            &lt;th&gt;Last modified&lt;/th&gt;
-        ///       [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DirectoryBrowsing {
             get {
                 return ResourceManager.GetString("DirectoryBrowsing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;tr&gt;
+        ///        &lt;td&gt;&lt;img src=&quot;/icons/back.gif&quot; alt=&quot;[BACK]&quot;&gt;&lt;/td&gt;
+        ///        &lt;td&gt;&lt;a href=&quot;{ParentDirectory}&quot;&gt;Parent Directory&lt;/a&gt;&lt;/td&gt;
+        ///        &lt;td&gt;-&lt;/td&gt;
+        ///        &lt;td&gt;-&lt;/td&gt;
+        ///      &lt;/tr&gt;.
+        /// </summary>
+        internal static string DirectoryBrowsingParentDirectory {
+            get {
+                return ResourceManager.GetString("DirectoryBrowsingParentDirectory", resourceCulture);
             }
         }
         
