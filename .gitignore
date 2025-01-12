@@ -4,3 +4,6 @@ obj/
 publish/
 .gitignore
 mahi.sln
+release/
+/Properties/PublishProfiles/
+/Mahi.csproj.user
