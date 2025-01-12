@@ -37,9 +37,15 @@ namespace Mahi.Core
 
 								if (response.StatusCode == 404 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
 								{
-									response.StatusCode = 404;
 									response.StatusText = "Not Found";
 									response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}"
+										, LastError is PageNotFoundException ? LastError.Message : "404 Page not found.")));
+									continue;
+								}
+								else if(response.StatusCode == 500 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
+								{
+									response.StatusText = "Internal Error";
+									response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http500.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}"
 										, LastError is PageNotFoundException ? LastError.Message : "404 Page not found.")));
 									continue;
 								}
@@ -61,8 +67,7 @@ namespace Mahi.Core
 									continue;
 								}
 
-								CallLuaInvoker(Path.Combine(Path.GetFullPath(AppConfig.Instance.BaseDirectory), page), false, request, response, out _);
-								continue;
+								CallLuaInvoker(Path.Combine(Path.GetFullPath(AppConfig.Instance.BaseDirectory), page), true, request, response, out _);
 							}
 						}
 						catch (Exception ex)
@@ -106,7 +111,6 @@ namespace Mahi.Core
 			string wwwappPath = Path.GetFullPath(config.BaseDirectory);
 			string controllersPath = Path.Combine(wwwappPath, ".controllers");
 			string modulesPath = Path.Combine(wwwappPath, ".modules");
-			string librariesPath = Path.Combine(wwwappPath, ".libraries");
 
 			// Default pages
 			bool defaultPageFound = false;
@@ -133,10 +137,8 @@ namespace Mahi.Core
 			foreach (var httpModule in httpModules)
 			{
 				string modulePath = Path.Combine(modulesPath, httpModule.Value.Trim('~').Replace('/', '\\').Trim('\\'));
-				bool b1 = CallLuaInvoker(modulePath, false, request, response, out object result);
-				bool b2 = result != null && (result as object[]).Length > 0 && (bool)(result as object[])[0];
-				//if (!CallLuaInvoker(modulePath, false, request, response, out object result) ||
-				//	(result != null && (result as object[]).Length > 0 && (bool)(result as object[])[0]))
+				if (!CallLuaInvoker(modulePath, false, request, response, out object result) ||
+					(result != null && (result as object[]).Length > 0 && (bool)(result as object[])[0]))
 					return;
 			}
 
