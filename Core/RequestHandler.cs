@@ -40,14 +40,14 @@ namespace Mahi.Core
                                 if (response.StatusCode == 404 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
                                 {
                                     response.StatusText = "Not Found";
-                                    response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}"
+                                    response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.LocalPath).Replace("{Description}"
                                         , LastError is PageNotFoundException ? LastError.Message : "404 Page not found.")));
                                     continue;
                                 }
                                 else if (response.StatusCode == 500 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
                                 {
                                     response.StatusText = "Internal Error";
-                                    response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http500.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}"
+                                    response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http500.Replace("{Url}", request.Uri.LocalPath).Replace("{Description}"
                                         , LastError is PageNotFoundException ? LastError.Message : "404 Page not found.")));
                                     continue;
                                 }
@@ -106,7 +106,7 @@ namespace Mahi.Core
                     log += "&1? ";
                     break;
             }
-            Program.Log(log += request.Method + " &r" + request.Uri.AbsolutePath);
+            Program.Log(log += request.Method + " &r" + request.Uri.LocalPath);
 
             // Detect irectory paths
             var config = AppConfig.Instance;
@@ -117,7 +117,7 @@ namespace Mahi.Core
 
             // Default pages
             bool defaultPageFound = false;
-            if (request.Uri.AbsolutePath.Trim('/') == "")
+            if (request.Uri.LocalPath.Trim('/') == "")
                 foreach (var defaultPage in config.DefaultPages)
                     if (File.Exists(Path.Combine(wwwappPath, defaultPage)))
                     {
@@ -152,7 +152,7 @@ namespace Mahi.Core
                     filename = Path.Combine(controllersPath, filename.Trim('=').Replace('/', '\\').Trim('\\'));
                 else // route to file
                     filename = Path.Combine(wwwappPath, filename.Trim('/').Replace('/', '\\'));
-                if(!File.Exists(filename))
+                if (!File.Exists(filename))
                 {
                     response.StatusCode = 404;
                     return;
@@ -162,6 +162,7 @@ namespace Mahi.Core
             }
             else
             {
+                filename = Path.Combine(wwwappPath, request.Uri.LocalPath.Trim('/').Replace('/', '\\'));
                 if (!File.Exists(filename))
                 {
                     if (Directory.Exists(filename))
@@ -170,15 +171,15 @@ namespace Mahi.Core
                         if (!config.DirectoryBrowsing || compareName.StartsWith(modulesPath.ToLower().TrimEnd('\\')) ||
                             compareName.StartsWith(librariesPath.ToLower().TrimEnd('\\')) ||
                             compareName.StartsWith(controllersPath.ToLower().TrimEnd('\\')) ||
-                            IsFrobbidenPath(request.Uri.AbsolutePath))
+                            IsFrobbidenPath(request.Uri.LocalPath))
                         {
                             response.StatusCode = 404;
                             return;
                         }
 
-                        string path = request.Uri.AbsolutePath.TrimEnd('/');
+                        string path = request.Uri.LocalPath.TrimEnd('/');
                         if (path == "") path = "/";
-                        string rows = CreateDirectoryBrowsintTable(filename, request.Uri.AbsolutePath);
+                        string rows = CreateDirectoryBrowsintTable(filename, request.Uri.LocalPath);
                         response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.DirectoryBrowsing
                             .Replace("{Rows}", rows)
                             .Replace("{Domain}", request.Uri.Host).TrimEnd('/').Replace("{Directory}", path)
@@ -190,14 +191,14 @@ namespace Mahi.Core
                     else if (config.ExtentionRequired)
                     {
                         response.StatusCode = 404;
-                        LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
+                        LastError = new PageNotFoundException("url \"" + request.Uri.LocalPath + "\" not found!");
                         return;
                     }
-                    filename = Path.Combine(wwwappPath, request.Uri.AbsolutePath.Trim('/').Replace('/', '\\') + ".htmlua");
+                    filename = Path.Combine(wwwappPath, request.Uri.LocalPath.Trim('/').Replace('/', '\\') + ".htmlua");
                     if (!File.Exists(filename))
                     {
                         response.StatusCode = 404;
-                        LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
+                        LastError = new PageNotFoundException("url \"" + request.Uri.LocalPath + "\" not found!");
                         return;
                     }
                 }
@@ -207,7 +208,7 @@ namespace Mahi.Core
                     if (compareName.StartsWith(modulesPath.ToLower().TrimEnd('\\')) ||
                         compareName.StartsWith(librariesPath.ToLower().TrimEnd('\\')) ||
                         compareName.StartsWith(controllersPath.ToLower().TrimEnd('\\')) ||
-                        IsFrobbidenPath(request.Uri.AbsolutePath))
+                        IsFrobbidenPath(request.Uri.LocalPath))
                     {
                         response.StatusCode = 404;
                         return;
@@ -217,11 +218,11 @@ namespace Mahi.Core
                     response.ResponseStream.Write(File.ReadAllBytes(filename));
                     return;
                 }
-                else if ((config.ExtentionRequired && !request.Uri.AbsolutePath.ToLower().EndsWith(".htmlua") || (!File.Exists(filename) && config.ExtentionRequired))
-                    || (!defaultPageFound && !config.ExtentionRequired && config.NotExtentionInUrl && request.Uri.AbsolutePath.ToLower().EndsWith(".htmlua")))
+                else if ((config.ExtentionRequired && !request.Uri.LocalPath.ToLower().EndsWith(".htmlua") || (!File.Exists(filename) && config.ExtentionRequired))
+                    || (!defaultPageFound && !config.ExtentionRequired && config.NotExtentionInUrl && request.Uri.LocalPath.ToLower().EndsWith(".htmlua")))
                 {
                     response.StatusCode = 404;
-                    LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
+                    LastError = new PageNotFoundException("url \"" + request.Uri.LocalPath + "\" not found!");
                     return;
                 }
             }
@@ -297,13 +298,13 @@ namespace Mahi.Core
                 .Replace("{DotnetVersion}", "dotnet " + Environment.Version.ToString()).Replace("{MahiVersion}", "Mahi " + Resources.Version)));
         }
 
-        private static bool IsFrobbidenPath(string absolutePath)
+        private static bool IsFrobbidenPath(string LocalPath)
         {
             foreach (var path in AppConfig.Instance.FrobiddenPaths)
-                if (Regex.Match(absolutePath, path).Success)
+                if (Regex.Match(LocalPath, path).Success)
                     return true;
             //! may only `return false` is ok
-            return absolutePath.ToLower().EndsWith(".htmlua");
+            return LocalPath.ToLower().EndsWith(".htmlua");
         }
 
         private static string CreateDirectoryBrowsintTable(string filename, string path)
