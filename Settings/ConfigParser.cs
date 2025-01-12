@@ -92,6 +92,9 @@ namespace Mahi.Settings
 			if (config.HttpModules == null)
 				config.HttpModules = new Dictionary<string, string>();
 
+			if (string.IsNullOrEmpty(config.BaseDirectory))
+				config.BaseDirectory = "wwwapp";
+
 			return config;
 		}
 
