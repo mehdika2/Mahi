@@ -1,4 +1,4 @@
-﻿using Fardin;
+﻿ using Fardin;
 using Mahi.HtmLua;
 using Mahi.Properties;
 using System;
@@ -20,7 +20,7 @@ namespace Mahi
         {
             if (!Directory.Exists("Logs"))
                 Directory.CreateDirectory("Logs");
-            writer = new StreamWriter(Path.Combine("Logs", DateTime.Now.ToString("yyyyMMdd_hhmmss_ff") + ".log"), true);
+            writer = new StreamWriter(Path.Combine("Logs", DateTime.Now.ToString("yyyy-MM-dd") + ".log"), true);
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
         }
 
