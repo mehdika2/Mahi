@@ -1,3 +1,5 @@
+BaseDirectory: wwwapp
+
 # List of urls to redirect to if request url was `/`
 DefaultPages:
   - index.htmlua

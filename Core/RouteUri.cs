@@ -18,7 +18,7 @@ namespace Mahi.Core
 				switch (route.Value.Type.ToLower())
 				{
 					case "regex":
-						if (Regex.Match(uri.AbsoluteUri, route.Value.Url).Success)
+						if (Regex.Match(uri.AbsolutePath, route.Value.Url).Success)
 						{
 							if (route.Value.RoutePath != null)
 								filename = route.Value.RoutePath;

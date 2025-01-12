@@ -18,9 +18,9 @@ namespace Mahi
 
         public Logger()
         {
-            if (!Directory.Exists("Logs"))
-                Directory.CreateDirectory("Logs");
-            writer = new StreamWriter(Path.Combine("Logs", DateTime.Now.ToString("yyyy-MM-dd") + ".log"), true);
+            string logsPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+            if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
+            writer = new StreamWriter(Path.Combine(logsPath, DateTime.Now.ToString("yyyy-MM-dd") + ".log"), true);
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
         }
 

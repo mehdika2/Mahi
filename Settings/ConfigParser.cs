@@ -37,6 +37,9 @@ namespace Mahi.Settings
 
 				switch (key.ToLowerInvariant())
 				{
+					case "basedirectory":
+						config.BaseDirectory = entry.Value.ToString();
+						break;
 					case "defaultpages":
 						config.DefaultPages = ReadStringArray((YamlSequenceNode)entry.Value);
 						break;
@@ -114,16 +117,28 @@ namespace Mahi.Settings
 
 				var route = new Route
 				{
-					Type = routeNode["type"].ToString(),
-					Url = routeNode["url"].ToString(),
-					RoutePath = routeNode.Children.ContainsKey("route") ? routeNode["route"].ToString() : null,
-					Redirect = routeNode.Children.ContainsKey("redirect") ? routeNode["redirect"].ToString() : null,
-					Controller = routeNode.Children.ContainsKey("controller") ? routeNode["controller"].ToString() : null
+					Type = GetValueCaseInsensitive(routeNode, "type"),
+					Url = GetValueCaseInsensitive(routeNode, "url"),
+					RoutePath = GetValueCaseInsensitive(routeNode, "route"),
+					Redirect = GetValueCaseInsensitive(routeNode, "redirect"),
+					Controller = GetValueCaseInsensitive(routeNode, "controller")
 				};
 
 				routes[key] = route;
 			}
 			return routes;
+		}
+
+		private static string GetValueCaseInsensitive(YamlMappingNode node, string key)
+		{
+			var entry = node.Children.FirstOrDefault(
+				x => string.Equals(((YamlScalarNode)x.Key).Value, key, StringComparison.OrdinalIgnoreCase)
+			);
+
+			if (entry.Equals(default(KeyValuePair<YamlNode, YamlNode>)))
+				return null;
+
+			return ((YamlScalarNode)entry.Value).Value;
 		}
 	}
 }

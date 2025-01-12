@@ -28,9 +28,8 @@ namespace Mahi.Core
 						{
 							var request = context.Request;
 							var response = context.Response;
-							var stream = response.ResponseStream;
 
-							HandleContext(request, response, stream);
+							HandleContext(request, response);
 
 							if (response.StatusCode != 200)
 							{
@@ -40,7 +39,7 @@ namespace Mahi.Core
 								{
 									response.StatusCode = 404;
 									response.StatusText = "Not Found";
-									stream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}"
+									response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http404.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}"
 										, LastError is PageNotFoundException ? LastError.Message : "404 Page not found.")));
 									continue;
 								}
@@ -62,23 +61,7 @@ namespace Mahi.Core
 									continue;
 								}
 
-
-								try
-								{
-									HtmLuaParser htmluaParser = new HtmLuaParser();
-									string script = htmluaParser.ToLua(File.ReadAllText(Path.GetFullPath("wwwapp") + '\\' + page));
-
-									LuaInvoker.Run(script, stream, request, response);
-								}
-								catch (LuaScriptException ex)
-								{
-									HandleException(ex.InnerException ?? ex, response);
-								}
-								catch (Exception ex)
-								{
-									HandleException(ex, response);
-								}
-
+								CallLuaInvoker(Path.Combine(Path.GetFullPath(AppConfig.Instance.BaseDirectory), page), false, request, response, out _);
 								continue;
 							}
 						}
@@ -93,7 +76,7 @@ namespace Mahi.Core
 				}
 		}
 
-		static void HandleContext(HttpRequest request, HttpResponse response, MemoryStream stream)
+		static void HandleContext(HttpRequest request, HttpResponse response)
 		{
 			response.Headers.Add("x-powered-by", "Mahi-" + Resources.Version);
 
@@ -118,12 +101,19 @@ namespace Mahi.Core
 			}
 			Program.Log(log += request.Method + " &r" + request.Uri.AbsolutePath);
 
+			// Detect irectory paths
+			var config = AppConfig.Instance;
+			string wwwappPath = Path.GetFullPath(config.BaseDirectory);
+			string controllersPath = Path.Combine(wwwappPath, ".controllers");
+			string modulesPath = Path.Combine(wwwappPath, ".modules");
+			string librariesPath = Path.Combine(wwwappPath, ".libraries");
+
 			// Default pages
 			bool defaultPageFound = false;
 			if (request.Uri.AbsolutePath.Trim('/') == "")
 			{
 				foreach (var defaultPage in AppConfig.Instance.DefaultPages)
-					if (File.Exists(Path.GetFullPath("wwwapp") + '\\' + defaultPage))
+					if (File.Exists(Path.Combine(wwwappPath, defaultPage)))
 					{
 						UriBuilder uriBuilder = new UriBuilder(request.Uri);
 						uriBuilder.Path = '/' + defaultPage;
@@ -142,23 +132,12 @@ namespace Mahi.Core
 			var httpModules = AppConfig.Instance.HttpModules;
 			foreach (var httpModule in httpModules)
 			{
-				string modulePath = Path.Combine(Directory.GetCurrentDirectory(), "modules", httpModule.Value.Trim('~').Replace('/', '\\').Trim('\\'));
-				try
-				{
-					object[] result = LuaInvoker.Run(File.ReadAllText(modulePath), stream, request, response) as object[];
-					if (result != null && result.Length > 0 && (bool)result[0])
-						return;
-				}
-				catch (LuaScriptException ex)
-				{
-					HandleException(ex.InnerException ?? ex, response);
+				string modulePath = Path.Combine(modulesPath, httpModule.Value.Trim('~').Replace('/', '\\').Trim('\\'));
+				bool b1 = CallLuaInvoker(modulePath, false, request, response, out object result);
+				bool b2 = result != null && (result as object[]).Length > 0 && (bool)(result as object[])[0];
+				//if (!CallLuaInvoker(modulePath, false, request, response, out object result) ||
+				//	(result != null && (result as object[]).Length > 0 && (bool)(result as object[])[0]))
 					return;
-				}
-				catch (Exception ex)
-				{
-					HandleException(ex, response);
-					return;
-				}
 			}
 
 			// Routing by config
@@ -173,23 +152,12 @@ namespace Mahi.Core
 				}
 				else if (filename.StartsWith("="))
 				{
-					filename = Path.Combine(Directory.GetCurrentDirectory(), "controllers", filename.Trim('=').Replace('/', '\\').Trim('\\'));
-					try
-					{
-						LuaInvoker.Run(File.ReadAllText(filename), stream, request, response);
-					}
-					catch (LuaScriptException ex)
-					{
-						HandleException(ex.InnerException ?? ex, response);
-					}
-					catch (Exception ex)
-					{
-						HandleException(ex, response);
-					}
+					filename = Path.Combine(controllersPath, filename.Trim('=').Replace('/', '\\').Trim('\\'));
+					CallLuaInvoker(filename, false, request, response, out _);
 					return;
 				}
 				else // route to file
-					filename = Path.Combine(Directory.GetCurrentDirectory(), "wwwapp", filename.Trim('/').Replace('/', '\\'));
+					filename = Path.Combine(wwwappPath, filename.Trim('/').Replace('/', '\\'));
 			}
 			else
 			{
@@ -201,7 +169,7 @@ namespace Mahi.Core
 						LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
 						return;
 					}
-					filename = Path.GetFullPath("wwwapp") + '\\' + request.Uri.AbsolutePath.Trim('/').Replace('/', '\\') + ".htmlua";
+					filename = Path.Combine(wwwappPath, request.Uri.AbsolutePath.Trim('/').Replace('/', '\\'), ".htmlua");
 					if (!File.Exists(filename))
 					{
 						response.StatusCode = 404;
@@ -213,7 +181,7 @@ namespace Mahi.Core
 				{
 					// Returning file
 					response.Headers.Add("content-type", MimeTypeHelper.GetMimeType(filename));
-					stream.Write(File.ReadAllBytes(filename));
+					response.ResponseStream.Write(File.ReadAllBytes(filename));
 					return;
 				}
 				else if ((AppConfig.Instance.ExtentionRequired && !request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && AppConfig.Instance.ExtentionRequired))
@@ -226,12 +194,23 @@ namespace Mahi.Core
 			}
 
 			// Run htmlua scripts
+			CallLuaInvoker(filename, true, request, response, out _);
+		}
+
+		static bool CallLuaInvoker(string filename, bool htmluaParse, HttpRequest request, HttpResponse response, out object result)
+		{
 			try
 			{
-				HtmLuaParser htmluaParser = new HtmLuaParser();
-				string script = htmluaParser.ToLua(File.ReadAllText(filename));
+				string script;
+				if (htmluaParse)
+				{
+					HtmLuaParser htmluaParser = new HtmLuaParser();
+					script = htmluaParser.ToLua(File.ReadAllText(filename));
+				}
+				else script = File.ReadAllText(filename);
 
-				LuaInvoker.Run(script, stream, request, response);
+				result = LuaInvoker.Run(script, request, response);
+				return true;
 			}
 			catch (LuaScriptException ex)
 			{
@@ -241,16 +220,18 @@ namespace Mahi.Core
 			{
 				HandleException(ex, response);
 			}
+			result = null;
+			return false;
 		}
 
 		public static Exception LastError;
 
 		static void HandleException(Exception ex)
 		{
-			if (!Directory.Exists("Errors"))
-				Directory.CreateDirectory("Errors");
+			string errorPath = Path.Combine(Directory.GetCurrentDirectory(), "Errors");
+			if (!Directory.Exists(errorPath)) Directory.CreateDirectory(errorPath);
 
-			File.WriteAllText(Path.Combine("Errors", DateTime.Now.ToString("yyyyMMdd_hhmmss_fffffff") + ".txt"), ex.ToString());
+			File.WriteAllText(Path.Combine(errorPath, DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss_fffffff") + ".txt"), ex.ToString());
 
 			Program.Log("&r[&4Error&r] " + ex.Message);
 

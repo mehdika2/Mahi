@@ -15,7 +15,7 @@ namespace Mahi.Core
 {
 	public static class LuaInvoker
 	{
-		public static object Run(string script, MemoryStream stream, HttpRequest request, HttpResponse response)
+		public static object Run(string script, HttpRequest request, HttpResponse response)
 		{
 			using (var lua = new Lua())
 			{
@@ -27,7 +27,7 @@ namespace Mahi.Core
 
 				object result = lua.DoString($"{name} = false ::start:: if {name} then return else {name} = true end " + script);
 				
-				stream.Write(Encoding.UTF8.GetBytes(builtInFunctions._html));
+				response.ResponseStream.Write(Encoding.UTF8.GetBytes(builtInFunctions._html));
 
 				return result;
 			}
@@ -73,9 +73,6 @@ namespace Mahi.Core
 		{
 			lua.State.Encoding = Encoding.UTF8;
 
-			// register import
-			lua.RegisterFunction("import", builtInFunctions, typeof(BuiltInFunctions).GetMethod("import"));
-
 			// register html helpers
 			lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
 			lua.RegisterFunction("safe", builtInFunctions, typeof(BuiltInFunctions).GetMethod("safe"));
@@ -105,7 +102,8 @@ namespace Mahi.Core
 			lua.RegisterFunction("utf_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_decode"));
 
 			// contains key built in function
-			lua.DoString("function containsKey(table, key) return table[key] ~= nil end");
+			lua.DoString("function containsKey(table, key) return table[key] ~= nil end " +
+				$"package.path = \"{Path.GetFullPath(AppConfig.Instance.BaseDirectory).Replace("\\", "\\\\")}\\\\.libraries\\\\?.lua\"");
 
 			lua["request"] = new
 			{

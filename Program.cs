@@ -32,7 +32,7 @@ namespace Mahi
 			// start server
 			var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
 			//var server = new HttpServer(IPAddress.Parse(ip), port);
-			server.BaseDirectory = "wwwapp";
+			server.BaseDirectory = AppConfig.Instance.BaseDirectory;
 
 			try
 			{

@@ -1,4 +1,5 @@
 ﻿using Fardin;
+using Mahi.Settings;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLua;
@@ -49,20 +50,6 @@ namespace Mahi.Core
         {
             response.StatusCode = status;
             response.StatusText = text;
-        }
-
-        public object import(string librariy)
-        {
-            try
-            {
-                // Use Lua's require function and return the result.
-                return lua.DoString($"return require('libraries.{librariy}')")[0];
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error importing libraries '{librariy}': {ex.Message}");
-                return null;
-            }
         }
 
         public void redirect(string url)
