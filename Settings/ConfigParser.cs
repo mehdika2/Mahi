@@ -58,6 +58,9 @@ namespace Mahi.Settings
 					case "routes":
 						config.Routes = ReadRouteDictionary((YamlMappingNode)entry.Value);
 						break;
+					case "frobbidenpaths":
+						config.FrobbidenPaths = ReadStringArray((YamlSequenceNode)entry.Value);
+						break;
 					case "redirecterrorcode":
 						config.RedirectErrorPage = bool.Parse(((YamlScalarNode)entry.Value).Value);
 						break;

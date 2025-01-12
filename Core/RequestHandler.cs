@@ -13,6 +13,7 @@ using NLua.Exceptions;
 using Mahi.Settings;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Mahi.Core
 {
@@ -60,7 +61,7 @@ namespace Mahi.Core
 
 								if (config.RedirectErrorPage)
 								{
-									if (!config.ExtentionRequired && config.NotExtentionInUrl && page != null && page.EndsWith(".htmlua"))
+									if (!config.ExtentionRequired && config.NotExtentionInUrl && page != null && page.ToLower().EndsWith(".htmlua"))
 										page = page.Remove(page.Length - 7, 7);
 
 									response.StatusCode = 302;
@@ -159,12 +160,13 @@ namespace Mahi.Core
 			{
 				if (!File.Exists(filename))
 				{
-					if(Directory.Exists(filename))
+					if (Directory.Exists(filename))
 					{
 						string compareName = filename.ToLower();
 						if (!config.DirectoryBrowsing || compareName.StartsWith(modulesPath.ToLower().TrimEnd('\\')) ||
 							compareName.StartsWith(librariesPath.ToLower().TrimEnd('\\')) ||
-							compareName.StartsWith(controllersPath.ToLower().TrimEnd('\\')))
+							compareName.StartsWith(controllersPath.ToLower().TrimEnd('\\')) ||
+							IsFrobbidenPath(request.Uri.AbsolutePath))
 						{
 							response.StatusCode = 404;
 							return;
@@ -195,12 +197,13 @@ namespace Mahi.Core
 						return;
 					}
 				}
-				else if (!filename.EndsWith(".htmlua"))
+				else if (!filename.ToLower().EndsWith(".htmlua"))
 				{
 					string compareName = filename.ToLower();
 					if (compareName.StartsWith(modulesPath.ToLower().TrimEnd('\\')) ||
 						compareName.StartsWith(librariesPath.ToLower().TrimEnd('\\')) ||
-						compareName.StartsWith(controllersPath.ToLower().TrimEnd('\\')))
+						compareName.StartsWith(controllersPath.ToLower().TrimEnd('\\')) ||
+						IsFrobbidenPath(request.Uri.AbsolutePath))
 					{
 						response.StatusCode = 404;
 						return;
@@ -210,8 +213,8 @@ namespace Mahi.Core
 					response.ResponseStream.Write(File.ReadAllBytes(filename));
 					return;
 				}
-				else if ((config.ExtentionRequired && !request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && config.ExtentionRequired))
-					|| (!defaultPageFound && !config.ExtentionRequired && config.NotExtentionInUrl && request.Uri.AbsolutePath.EndsWith(".htmlua")))
+				else if ((config.ExtentionRequired && !request.Uri.AbsolutePath.ToLower().EndsWith(".htmlua") || (!File.Exists(filename) && config.ExtentionRequired))
+					|| (!defaultPageFound && !config.ExtentionRequired && config.NotExtentionInUrl && request.Uri.AbsolutePath.ToLower().EndsWith(".htmlua")))
 				{
 					response.StatusCode = 404;
 					LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
@@ -277,7 +280,7 @@ namespace Mahi.Core
 
 				if (config.RedirectErrorPage)
 				{
-					if (!config.ExtentionRequired && config.NotExtentionInUrl && page.EndsWith(".htmlua"))
+					if (!config.ExtentionRequired && config.NotExtentionInUrl && page.ToLower().EndsWith(".htmlua"))
 						page = page.Remove(page.Length - 7, 7);
 
 					response.Headers.Add("Location", page);
@@ -290,7 +293,16 @@ namespace Mahi.Core
 				.Replace("{DotnetVersion}", "dotnet " + Environment.Version.ToString()).Replace("{MahiVersion}", "Mahi " + Resources.Version)));
 		}
 
-		private static string CreateDirectoryBrowsintTable(string filename,string path)
+		private static bool IsFrobbidenPath(string absolutePath)
+		{
+			foreach (var path in AppConfig.Instance.FrobbidenPaths)
+				if (Regex.Match(absolutePath, path).Success)
+					return true;
+			//! may only `return false` is ok
+			return absolutePath.ToLower().EndsWith(".htmlua");
+		}
+
+		private static string CreateDirectoryBrowsintTable(string filename, string path)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -308,7 +320,7 @@ namespace Mahi.Core
 			}
 
 			string[] files = Directory.GetFiles(filename);
-			foreach(var  file in files.Where(file => !Path.GetFileName(file).StartsWith(".")))
+			foreach (var file in files.Where(file => !Path.GetFileName(file).StartsWith(".") && !Path.GetFileName(file).ToLower().EndsWith(".htmlua")))
 			{
 				FileInfo info = new FileInfo(file);
 				string name = Path.GetFileName(file);
