@@ -22,10 +22,6 @@ namespace Mahi.Core
 						{
 							if (route.Value.RoutePath != null)
 								filename = route.Value.RoutePath;
-							else if (route.Value.Redirect != null)
-								filename = ">" + route.Value.Redirect;
-							else if (route.Value.Controller != null)
-								filename = "=" + route.Value.Controller;
 							else throw new InvalidDataException("No route or redirect path set for regex route: " + route.Key);
 							return true;
 						}
@@ -36,10 +32,6 @@ namespace Mahi.Core
 							break;
 						if (route.Value.RoutePath != null)
 							filename = route.Value.RoutePath;
-						else if (route.Value.Redirect != null)
-							filename = ">" + route.Value.Redirect;
-						else if (route.Value.Controller != null)
-							filename = "=" + route.Value.Controller;
 						else throw new InvalidDataException("No route or redirect path set for static route: " + route.Key);
 						return true;
 
@@ -47,15 +39,15 @@ namespace Mahi.Core
 
 						if (route.Value.RoutePath != null)
 							filename = ProcessDynamicRoute(route.Value.Url, uri.AbsolutePath, route.Value.RoutePath);
-						else if (route.Value.Redirect != null)
-						{
-							filename = ProcessDynamicRoute(route.Value.Url, uri.AbsolutePath, route.Value.Redirect);
-							if (filename == null)
-								break;
-							filename = filename.Insert(0, ">");
-						}
-						else if (route.Value.Controller != null)
-							filename = "=" + route.Value.Controller;
+						//else if (route.Value.Redirect != null)
+						//{
+						//	filename = ProcessDynamicRoute(route.Value.Url, uri.AbsolutePath, route.Value.Redirect);
+						//	if (filename == null)
+						//		break;
+						//	filename = filename.Insert(0, ">");
+						//}
+						//else if (route.Value.Controller != null)
+						//	filename = "=" + route.Value.Controller;
 						else throw new InvalidDataException("No route or redirect path set for dynamic route: " + route.Key);
 
 						return true;

@@ -58,7 +58,7 @@ namespace Mahi.Settings
 					case "routes":
 						config.Routes = ReadRouteDictionary((YamlMappingNode)entry.Value);
 						break;
-					case "frobbidenpaths":
+					case "frobiddenpaths":
 						config.FrobiddenPaths = ReadStringArray((YamlSequenceNode)entry.Value);
 						break;
 					case "redirecterrorcode":
@@ -130,8 +130,6 @@ namespace Mahi.Settings
 					Type = GetValueCaseInsensitive(routeNode, "type"),
 					Url = GetValueCaseInsensitive(routeNode, "url"),
 					RoutePath = GetValueCaseInsensitive(routeNode, "route"),
-					Redirect = GetValueCaseInsensitive(routeNode, "redirect"),
-					Controller = GetValueCaseInsensitive(routeNode, "controller")
 				};
 
 				routes[key] = route;
