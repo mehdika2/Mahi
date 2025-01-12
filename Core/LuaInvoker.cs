@@ -94,15 +94,17 @@ namespace Mahi.Core
 			lua.RegisterFunction("isNullOrEmpty", builtInFunctions, typeof(BuiltInFunctions).GetMethod("isNullOrEmpty"));
 			lua.RegisterFunction("getError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getError"));
 			lua.RegisterFunction("clearError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("clearError"));
+            lua.RegisterFunction("match", builtInFunctions, typeof(BuiltInFunctions).GetMethod("match"));
+            lua.RegisterFunction("matchs", builtInFunctions, typeof(BuiltInFunctions).GetMethod("matchs"));
 
-			// register encoding functions
-			lua.RegisterFunction("base64_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_decode"));
+            // register encoding functions
+            lua.RegisterFunction("base64_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_decode"));
 			lua.RegisterFunction("base64_encode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_encode"));
 			lua.RegisterFunction("utf_encode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_encode"));
 			lua.RegisterFunction("utf_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_decode"));
 
-			// contains key built in function
-			lua.DoString("function containsKey(table, key) return table[key] ~= nil end " +
+            // contains key built in function
+            lua.DoString("function containsKey(table, key) return table[key] ~= nil end " +
 				$"package.path = \"{Path.GetFullPath(AppConfig.Instance.BaseDirectory).Replace("\\", "\\\\")}\\\\.libraries\\\\?.lua\"");
 
 			lua["request"] = new

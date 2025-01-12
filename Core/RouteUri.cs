@@ -50,6 +50,9 @@ namespace Mahi.Core
 						//	filename = "=" + route.Value.Controller;
 						else throw new InvalidDataException("No route or redirect path set for dynamic route: " + route.Key);
 
+						if (filename == null)
+							return false;
+
 						return true;
 
 					default:

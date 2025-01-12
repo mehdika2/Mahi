@@ -152,6 +152,11 @@ namespace Mahi.Core
                     filename = Path.Combine(controllersPath, filename.Trim('=').Replace('/', '\\').Trim('\\'));
                 else // route to file
                     filename = Path.Combine(wwwappPath, filename.Trim('/').Replace('/', '\\'));
+                if(!File.Exists(filename))
+                {
+                    response.StatusCode = 404;
+                    return;
+                }
                 CallLuaInvoker(filename, filename.ToLower().EndsWith(".htmlua"), request, response, out _);
                 return;
             }

@@ -13,6 +13,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Mahi.Core
@@ -152,5 +153,30 @@ namespace Mahi.Core
         {
             return Encoding.UTF8.GetString(bytes);
         }
-	}
+
+        public LuaTable match(string input, string pattern)
+        {
+            var table = lua.DoString("return {}")[0] as LuaTable;
+            var result = Regex.Match(input, pattern);
+            table["success"] = result.Success;
+            table["index"] = result.Index;
+            table["length"] = result.Length;
+            return table;
+        }
+
+        public LuaTable matchs(string input, string pattern)
+        {
+            var table = lua.DoString("return {}")[0] as LuaTable;
+            int index = 1;
+            foreach (Match match in Regex.Matches(input, pattern))
+            {
+                var mtable = lua.DoString("return {}")[0] as LuaTable;
+                mtable["success"] = match.Success;
+                mtable["index"] = match.Index;
+                mtable["length"] = match.Length;
+                table[index++] = mtable;
+            }
+            return table;
+        }
+    }
 }
