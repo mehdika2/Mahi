@@ -33,7 +33,8 @@ namespace Mahi.Core
 
 							if (response.StatusCode != 200)
 							{
-								AppConfig.Instance.ErrorPages.TryGetValue(response.StatusCode.ToString(), out string page);
+								var config = AppConfig.Instance;
+								config.ErrorPages.TryGetValue(response.StatusCode.ToString(), out string page);
 
 								if (response.StatusCode == 404 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
 								{
@@ -42,7 +43,7 @@ namespace Mahi.Core
 										, LastError is PageNotFoundException ? LastError.Message : "404 Page not found.")));
 									continue;
 								}
-								else if(response.StatusCode == 500 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
+								else if (response.StatusCode == 500 && !File.Exists(Path.GetFullPath("wwwapp") + '\\' + page))
 								{
 									response.StatusText = "Internal Error";
 									response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http500.Replace("{Url}", request.Uri.AbsolutePath).Replace("{Description}"
@@ -57,9 +58,9 @@ namespace Mahi.Core
 									continue;
 								}
 
-								if (AppConfig.Instance.RedirectErrorPage)
+								if (config.RedirectErrorPage)
 								{
-									if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page != null && page.EndsWith(".htmlua"))
+									if (!config.ExtentionRequired && config.NotExtentionInUrl && page != null && page.EndsWith(".htmlua"))
 										page = page.Remove(page.Length - 7, 7);
 
 									response.StatusCode = 302;
@@ -67,7 +68,7 @@ namespace Mahi.Core
 									continue;
 								}
 
-								CallLuaInvoker(Path.Combine(Path.GetFullPath(AppConfig.Instance.BaseDirectory), page), true, request, response, out _);
+								CallLuaInvoker(Path.Combine(Path.GetFullPath(config.BaseDirectory), page), true, request, response, out _);
 							}
 						}
 						catch (Exception ex)
@@ -111,12 +112,13 @@ namespace Mahi.Core
 			string wwwappPath = Path.GetFullPath(config.BaseDirectory);
 			string controllersPath = Path.Combine(wwwappPath, ".controllers");
 			string modulesPath = Path.Combine(wwwappPath, ".modules");
+			string librariesPath = Path.Combine(wwwappPath, ".libraries");
 
 			// Default pages
 			bool defaultPageFound = false;
 			if (request.Uri.AbsolutePath.Trim('/') == "")
 			{
-				foreach (var defaultPage in AppConfig.Instance.DefaultPages)
+				foreach (var defaultPage in config.DefaultPages)
 					if (File.Exists(Path.Combine(wwwappPath, defaultPage)))
 					{
 						UriBuilder uriBuilder = new UriBuilder(request.Uri);
@@ -133,7 +135,7 @@ namespace Mahi.Core
 			}
 
 			// Http modules first
-			var httpModules = AppConfig.Instance.HttpModules;
+			var httpModules = config.HttpModules;
 			foreach (var httpModule in httpModules)
 			{
 				string modulePath = Path.Combine(modulesPath, httpModule.Value.Trim('~').Replace('/', '\\').Trim('\\'));
@@ -165,7 +167,25 @@ namespace Mahi.Core
 			{
 				if (!File.Exists(filename))
 				{
-					if (AppConfig.Instance.ExtentionRequired)
+					if(Directory.Exists(filename))
+					{
+						string compareName = filename.ToLower();
+						if (!config.DirectoryBrowsing || compareName.StartsWith(modulesPath.ToLower().TrimEnd('\\')) ||
+							compareName.StartsWith(librariesPath.ToLower().TrimEnd('\\')) ||
+							compareName.StartsWith(controllersPath.ToLower().TrimEnd('\\')))
+						{
+							response.StatusCode = 404;
+							return;
+						}
+
+						string rows = CreateDirectoryBrowsintTable(filename, request.Uri.AbsolutePath);
+						response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.DirectoryBrowsing.Replace("{Rows}", rows)
+							.Replace("{Directory}", request.Uri.AbsolutePath).Replace("{ParentDirectory}"
+							, Path.GetDirectoryName(request.Uri.AbsolutePath).Replace('\\', '/'))));
+
+						return;
+					}
+					else if (config.ExtentionRequired)
 					{
 						response.StatusCode = 404;
 						LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
@@ -181,16 +201,24 @@ namespace Mahi.Core
 				}
 				else if (!filename.EndsWith(".htmlua"))
 				{
+					string compareName = filename.ToLower();
+					if (compareName.StartsWith(modulesPath.ToLower().TrimEnd('\\')) ||
+						compareName.StartsWith(librariesPath.ToLower().TrimEnd('\\')) ||
+						compareName.StartsWith(controllersPath.ToLower().TrimEnd('\\')))
+					{
+						response.StatusCode = 404;
+						return;
+					}
 					// Returning file
 					response.Headers.Add("content-type", MimeTypeHelper.GetMimeType(filename));
 					response.ResponseStream.Write(File.ReadAllBytes(filename));
 					return;
 				}
-				else if ((AppConfig.Instance.ExtentionRequired && !request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && AppConfig.Instance.ExtentionRequired))
-					|| (!defaultPageFound && !AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && request.Uri.AbsolutePath.EndsWith(".htmlua")))
+				else if ((config.ExtentionRequired && !request.Uri.AbsolutePath.EndsWith(".htmlua") || (!File.Exists(filename) && config.ExtentionRequired))
+					|| (!defaultPageFound && !config.ExtentionRequired && config.NotExtentionInUrl && request.Uri.AbsolutePath.EndsWith(".htmlua")))
 				{
 					response.StatusCode = 404;
-						LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
+					LastError = new PageNotFoundException("url \"" + request.Uri.AbsolutePath + "\" not found!");
 					return;
 				}
 			}
@@ -244,14 +272,16 @@ namespace Mahi.Core
 		{
 			HandleException(ex);
 
+			var config = AppConfig.Instance;
+
 			string page;
-			if (AppConfig.Instance.ErrorPages.TryGetValue("500", out page))
+			if (config.ErrorPages.TryGetValue("500", out page))
 			{
 				response.StatusCode = 500;
 
-				if (AppConfig.Instance.RedirectErrorPage)
+				if (config.RedirectErrorPage)
 				{
-					if (!AppConfig.Instance.ExtentionRequired && AppConfig.Instance.NotExtentionInUrl && page.EndsWith(".htmlua"))
+					if (!config.ExtentionRequired && config.NotExtentionInUrl && page.EndsWith(".htmlua"))
 						page = page.Remove(page.Length - 7, 7);
 
 					response.Headers.Add("Location", page);
@@ -262,6 +292,56 @@ namespace Mahi.Core
 			response.ResponseStream.Write(Encoding.UTF8.GetBytes(Resources.Http500.Replace("{Error}", "Internal server error").Replace("{Type}", ex.GetType().Name)
 				.Replace("{Description}", WebUtility.HtmlEncode(ex.Message)).Replace("{Exception}", WebUtility.HtmlEncode(ex.ToString()))
 				.Replace("{DotnetVersion}", "dotnet " + Environment.Version.ToString()).Replace("{MahiVersion}", "Mahi " + Resources.Version)));
+		}
+
+		private static string CreateDirectoryBrowsintTable(string filename,string path)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			string[] directories = Directory.GetDirectories(filename);
+			foreach (var directory in directories)
+			{
+				DirectoryInfo info = new DirectoryInfo(directory);
+				string name = Path.GetFileName(directory);
+				sb.AppendLine(@$"<tr>
+    <td><img src=""/icons/folder.gif"" alt=""[DIR]""></td>
+    <td><a href=""{(path == "/" ? "" : path + "/")}{name}"">{name}/</a></td>
+    <td>{info.LastWriteTime.ToString("yyyy/MM/dd hh:mm")}</td>
+    <td>-</td>
+</tr>");
+			}
+
+			string[] files = Directory.GetFiles(filename);
+			foreach(var  file in files)
+			{
+				FileInfo info = new FileInfo(file);
+				string name = Path.GetFileName(file);
+				sb.AppendLine(@$"<tr>
+    <td><img src=""/icons/layout.gif"" alt=""[DIR]""></td>
+    <td><a href=""{(path == "/" ? "" : path + "/")}{name}"">{name}</a></td>
+    <td>{info.LastWriteTime.ToString("yyyy/MM/dd hh:mm")}</td>
+    <td>{FormatSize(info.Length)}</td>
+</tr>");
+			}
+			return sb.ToString();
+		}
+
+		static string FormatSize(long bytes)
+		{
+			const long KB = 1024;
+			const long MB = KB * 1024;
+			const long GB = MB * 1024;
+			const long TB = GB * 1024;
+
+			if (bytes >= TB)
+				return $"{(double)bytes / TB:F2} TB";
+			if (bytes >= GB)
+				return $"{(double)bytes / GB:F2} GB";
+			if (bytes >= MB)
+				return $"{(double)bytes / MB:F2} MB";
+			if (bytes >= KB)
+				return $"{(double)bytes / KB:F2} KB";
+			return $"{bytes} B";
 		}
 	}
 }

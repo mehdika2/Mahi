@@ -4,6 +4,9 @@ BaseDirectory: wwwapp
 DefaultPages:
   - index.htmlua
 
+# Browsing directories and see files and content of directories
+DirectoryBrowsing: false
+
 # Allows to run file without adding .htmlua after filename if set true
 ExtentionRequired: false
 

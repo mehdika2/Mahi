@@ -40,6 +40,9 @@ namespace Mahi.Settings
 					case "basedirectory":
 						config.BaseDirectory = entry.Value.ToString();
 						break;
+					case "directorybrowsing":
+						config.DirectoryBrowsing = bool.Parse(((YamlScalarNode)entry.Value).Value);
+						break;
 					case "defaultpages":
 						config.DefaultPages = ReadStringArray((YamlSequenceNode)entry.Value);
 						break;

@@ -70,6 +70,40 @@ namespace Mahi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE HTML&gt;
+        ///&lt;html&gt;
+        /// &lt;head&gt;
+        ///  &lt;title&gt;Directory {Directory}&lt;/title&gt;
+        ///  &lt;style&gt;
+        ///    td:not(:first-child){
+        ///        padding-left: 1rem;
+        ///        padding-right: 1rem;
+        ///    }
+        ///    th {
+        ///        text-align: left;
+        ///        padding-left: 1rem;
+        ///        padding-right: 1rem;
+        ///        border-bottom: 2px solid gray;
+        ///    }
+        ///  &lt;/style&gt;
+        /// &lt;/head&gt;
+        /// &lt;body&gt;
+        ///&lt;h1&gt;Directory {Directory}&lt;/h1&gt;
+        ///&lt;table&gt;
+        ///    &lt;tbody&gt;
+        ///        &lt;tr&gt;
+        ///            &lt;th&gt;&lt;/th&gt;
+        ///            &lt;th&gt;Name&lt;/th&gt;
+        ///            &lt;th&gt;Last modified&lt;/th&gt;
+        ///       [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DirectoryBrowsing {
+            get {
+                return ResourceManager.GetString("DirectoryBrowsing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No template found with name {0}.
         /// </summary>
         internal static string Error_CreateTemplateNameNotFound {

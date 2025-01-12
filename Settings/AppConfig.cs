@@ -15,6 +15,7 @@ namespace Mahi.Settings
 
         public string BaseDirectory { get; set; }
         public string[] DefaultPages { get; set; }
+		public bool DirectoryBrowsing { get; set; }
 		public bool ExtentionRequired { get; set; }
 		public bool NotExtentionInUrl { get; set; }
 		public Dictionary<string, string> ConnectionStrings { get; set; }
