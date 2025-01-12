@@ -295,7 +295,7 @@ namespace Mahi.Core
 
 		private static bool IsFrobbidenPath(string absolutePath)
 		{
-			foreach (var path in AppConfig.Instance.FrobbidenPaths)
+			foreach (var path in AppConfig.Instance.FrobiddenPaths)
 				if (Regex.Match(absolutePath, path).Success)
 					return true;
 			//! may only `return false` is ok

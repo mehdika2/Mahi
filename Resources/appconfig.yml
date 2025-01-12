@@ -22,6 +22,10 @@ ConnectionStrings:
 HttpModules:
   SessionManager: '/session_manager.lua'
 
+
+FrobbidenPaths:
+  - Errors/*
+
 # Routes
 Routes:
   Admin:
@@ -46,5 +50,5 @@ Routes:
 
 # Custom error pages
 ErrorPages:
-  404: /Error/404.htmlua
-  500: /Error/500.htmlua
+  404: /Errors/404.htmlua
+  500: /Errors/500.htmlua

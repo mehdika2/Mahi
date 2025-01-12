@@ -30,8 +30,8 @@ namespace Mahi
 			AppConfig.StartConfigWatcher();
 
 			// start server
-			var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
-			//var server = new HttpServer(IPAddress.Parse(ip), port);
+			//var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
+			var server = new HttpServer(IPAddress.Parse(ip), port);
 			server.BaseDirectory = AppConfig.Instance.BaseDirectory;
 
 			try

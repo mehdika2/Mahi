@@ -59,7 +59,7 @@ namespace Mahi.Settings
 						config.Routes = ReadRouteDictionary((YamlMappingNode)entry.Value);
 						break;
 					case "frobbidenpaths":
-						config.FrobbidenPaths = ReadStringArray((YamlSequenceNode)entry.Value);
+						config.FrobiddenPaths = ReadStringArray((YamlSequenceNode)entry.Value);
 						break;
 					case "redirecterrorcode":
 						config.RedirectErrorPage = bool.Parse(((YamlScalarNode)entry.Value).Value);
@@ -83,6 +83,8 @@ namespace Mahi.Settings
 				config.NotExtentionInUrl = false;
 			if (config.DefaultPages == null)
 				config.DefaultPages = new string[0];
+			if (config.FrobiddenPaths == null)
+				config.FrobiddenPaths = new string[0];
 			if (config.Routes == null)
 				config.Routes = new Dictionary<string, Route>();
 			if (config.ErrorPages == null)
