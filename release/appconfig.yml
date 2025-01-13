@@ -1,0 +1,18 @@
+BaseDirectory: .\wwwapp
+
+DirectoryBrowsing: false
+
+DefaultPages:
+    - index.htmlua
+
+ExtentionRequired: false
+
+NotExtentionInUrl: true
+
+RedirectErrorPage: false
+
+Routes:
+    Admin:
+        Type: Regex
+        Url: /admin*
+        Controller: admin.lua

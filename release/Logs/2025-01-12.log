@@ -1,0 +1,39 @@
+2025/01/12 01:03:16.41: [Info] Starting server ...
+2025/01/12 01:03:16.43: [Info] Server started and binded on http://127.0.0.1:1010/
+2025/01/12 01:03:20.60: [Log] GET /
+2025/01/12 01:03:22.92: [Log] GET /icons/folder.gif
+2025/01/12 01:04:25.08: [Log] GET /
+2025/01/12 01:04:25.08: [Error] Faild to reload config file: Cannot find error page for status code 404 with filename: Errors/404.htmlua
+2025/01/12 01:04:25.09: [Error] Faild to reload config file: Cannot find error page for status code 404 with filename: Errors/404.htmlua
+2025/01/12 01:04:25.09: [Error] Faild to reload config file: Cannot find error page for status code 404 with filename: Errors/404.htmlua
+2025/01/12 01:04:25.13: [Log] GET /icons/folder.gif
+2025/01/12 01:04:25.14: [Error] Faild to reload config file: Cannot find error page for status code 404 with filename: Errors/404.htmlua
+2025/01/12 01:04:25.14: [Error] Faild to reload config file: Cannot find error page for status code 404 with filename: Errors/404.htmlua
+2025/01/12 01:04:25.14: [Error] Faild to reload config file: Cannot find error page for status code 404 with filename: Errors/404.htmlua
+2025/01/12 01:04:36.89: [Log] GET /
+2025/01/12 01:04:41.64: [Log] GET /
+2025/01/12 01:04:41.69: [Log] GET /favicon.ico
+2025/01/12 01:04:47.80: [Log] GET /
+2025/01/12 01:04:47.89: [Log] GET /css/bootstrap.min.css
+2025/01/12 01:04:47.90: [Log] GET /css/style.css
+2025/01/12 01:04:47.91: [Log] GET /js/bootstrap.bundle.min.js
+2025/01/12 01:04:51.47: [Log] GET /css/bootstrap.min.css.map
+2025/01/12 01:04:52.30: [Log] GET /
+2025/01/12 01:04:52.35: [Log] GET /css/bootstrap.min.css
+2025/01/12 01:04:52.36: [Log] GET /css/style.css
+2025/01/12 01:04:52.36: [Log] GET /js/bootstrap.bundle.min.js
+2025/01/12 01:15:30.94: [Info] Starting server ...
+2025/01/12 01:15:30.96: [Info] Server started and binded on http://127.0.0.1:1010/
+2025/01/12 01:15:32.12: [Log] GET /
+2025/01/12 01:15:32.22: [Log] GET /css/bootstrap.min.css
+2025/01/12 01:15:32.25: [Error] Object reference not set to an instance of an object.
+2025/01/12 01:15:32.26: [Log] GET /css/style.css
+2025/01/12 01:15:32.26: [Error] Object reference not set to an instance of an object.
+2025/01/12 01:15:32.27: [Log] GET /js/bootstrap.bundle.min.js
+2025/01/12 01:15:32.29: [Error] Object reference not set to an instance of an object.
+2025/01/12 01:23:15.33: [Info] Starting server ...
+2025/01/12 01:23:15.35: [Info] Server started and binded on http://127.0.0.1:1010/
+2025/01/12 01:23:16.33: [Log] GET /
+2025/01/12 01:23:16.40: [Log] GET /css/bootstrap.min.css
+2025/01/12 01:23:16.41: [Log] GET /css/style.css
+2025/01/12 01:23:16.42: [Log] GET /js/bootstrap.bundle.min.js

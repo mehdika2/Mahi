@@ -1,0 +1,4 @@
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Mahi.Core.RequestHandler.IsFrobbidenPath(String absolutePath) in D:\Sample Projects\Mahi\Core\RequestHandler.cs:line 298
+   at Mahi.Core.RequestHandler.HandleContext(HttpRequest request, HttpResponse response) in D:\Sample Projects\Mahi\Core\RequestHandler.cs:line 203
+   at Mahi.Core.RequestHandler.Process(HttpServer server) in D:\Sample Projects\Mahi\Core\RequestHandler.cs:line 33
