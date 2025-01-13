@@ -24,6 +24,7 @@ namespace Mahi.Settings
 
 			var seenKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
+			bool foundExtentionRequired = false;
 			foreach (var entry in mapping.Children)
 			{
 				var key = ((YamlScalarNode)entry.Key).Value;
@@ -48,6 +49,7 @@ namespace Mahi.Settings
 						break;
 					case "extentionrequired":
 						config.ExtentionRequired = bool.Parse(((YamlScalarNode)entry.Value).Value);
+						foundExtentionRequired = true;
 						break;
 					case "notextentioninurl":
 						config.NotExtentionInUrl = bool.Parse(((YamlScalarNode)entry.Value).Value);
@@ -67,7 +69,7 @@ namespace Mahi.Settings
 					case "errorpages":
 						config.ErrorPages = ReadDictionary((YamlMappingNode)entry.Value);
 						foreach (var page in config.ErrorPages)
-							if(!File.Exists(Path.GetFullPath("wwwapp") + '\\' + page.Value))
+							if (!File.Exists(Path.GetFullPath("wwwapp") + '\\' + page.Value))
 								throw new FileNotFoundException("Cannot find error page for status code " + page.Key + " with filename: " + page.Value);
 						break;
 					case "httpmodules":
@@ -94,6 +96,8 @@ namespace Mahi.Settings
 
 			if (string.IsNullOrEmpty(config.BaseDirectory))
 				config.BaseDirectory = "wwwapp";
+			if (!foundExtentionRequired)
+				config.ExtentionRequired = true;
 
 			return config;
 		}

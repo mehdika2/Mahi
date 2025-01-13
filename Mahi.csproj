@@ -16,6 +16,8 @@
     <Copyright>Copyright © Fardin 2024</Copyright>
     <Description>Mahi web development framework using lua</Description>
     <Title>Mahi Interpreter</Title>
+    <SignAssembly>True</SignAssembly>
+    <DelaySign>False</DelaySign>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
