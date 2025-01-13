@@ -14,6 +14,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Mahi.Core
@@ -155,8 +156,8 @@ namespace Mahi.Core
 		}
 
 		public string utf_decode(byte[] bytes)
-		{
-			return Encoding.UTF8.GetString(bytes);
-		}
+        {
+            return Encoding.UTF8.GetString(bytes);
+        }
 	}
 }
