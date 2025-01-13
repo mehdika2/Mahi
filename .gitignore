@@ -2,7 +2,6 @@ bin/
 obj/
 .vs/
 publish/
-.gitignore
 mahi.sln
 release/
 /Properties/PublishProfiles/
