@@ -22,7 +22,6 @@ ConnectionStrings:
 HttpModules:
   SessionManager: '/session_manager.lua'
 
-
 FrobbidenPaths:
   - Errors/*
 

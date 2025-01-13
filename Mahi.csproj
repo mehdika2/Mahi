@@ -30,12 +30,15 @@
     <Compile Remove="bin\**" />
     <Compile Remove="examples\**" />
     <Compile Remove="publish\**" />
+    <Compile Remove="release\**" />
     <EmbeddedResource Remove="bin\**" />
     <EmbeddedResource Remove="examples\**" />
     <EmbeddedResource Remove="publish\**" />
+    <EmbeddedResource Remove="release\**" />
     <None Remove="bin\**" />
     <None Remove="examples\**" />
     <None Remove="publish\**" />
+    <None Remove="release\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="microsoft.data.sqlite" Version="9.0.0" />
     <PackageReference Include="newtonsoft.json" Version="13.0.3" />
     <PackageReference Include="nlua" Version="1.7.3" />
     <PackageReference Include="system.data.sqlclient" Version="4.9.0" />
