@@ -25,6 +25,8 @@ HttpModules:
 FrobbidenPaths:
   - Errors/*
 
+AuthKey: ''
+
 # Routes
 Routes:
   Admin:

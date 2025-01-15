@@ -6,3 +6,4 @@ mahi.sln
 release/
 /Properties/PublishProfiles/
 /Mahi.csproj.user
+*.tmp

@@ -94,7 +94,7 @@ namespace Mahi.Core
 			lua.RegisterFunction("getError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getError"));
 			lua.RegisterFunction("clearError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("clearError"));
 			lua.RegisterFunction("match", builtInFunctions, typeof(BuiltInFunctions).GetMethod("match"));
-			lua.RegisterFunction("matchs", builtInFunctions, typeof(BuiltInFunctions).GetMethod("matchs"));
+			lua.RegisterFunction("matches", builtInFunctions, typeof(BuiltInFunctions).GetMethod("matches"));
 
 			// register encoding functions
 			lua.RegisterFunction("base64_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_decode"));

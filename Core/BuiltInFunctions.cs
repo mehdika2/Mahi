@@ -170,7 +170,7 @@ namespace Mahi.Core
 			return table;
 		}
 
-		public LuaTable matchs(string input, string pattern)
+		public LuaTable matches(string input, string pattern)
 		{
 			var table = lua.DoString("return {}")[0] as LuaTable;
 			int index = 1;
