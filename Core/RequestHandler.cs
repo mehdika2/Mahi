@@ -14,6 +14,7 @@ using Mahi.Settings;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Mahi.LuaCore;
 
 namespace Mahi.Core
 {

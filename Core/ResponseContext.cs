@@ -8,6 +8,7 @@ using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using NLua;
+using Mahi.LuaCore;
 
 namespace Mahi.Core
 {

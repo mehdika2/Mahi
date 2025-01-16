@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Mahi.Core
 {
-	public class PageNotFoundException : Exception
-	{
-		public PageNotFoundException(string page) : base(page) { }
-	}
+    public class PageNotFoundException : Exception
+    {
+        public PageNotFoundException(string page) : base(page) { }
+    }
 }
