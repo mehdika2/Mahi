@@ -258,7 +258,8 @@ namespace Mahi.HtmLua
 			position++;
 			bool stringOpen = false;
 			int openParentheses = 0;
-			while (!isAtEnd())
+			bool defaultSafeOpen = false;
+			for (int i = 0; !isAtEnd(); i++)
 			{
 				switch (current)
 				{
@@ -275,6 +276,8 @@ namespace Mahi.HtmLua
 							position++;
 
 							//! May need check if not AtEnd here
+							if (defaultSafeOpen)
+								script += ")";
 							StartGo();
 							return;
 						}
@@ -289,14 +292,26 @@ namespace Mahi.HtmLua
 						if (!stringOpen && openParentheses == 0)
 						{
 							//! May need check if not AtEnd here
+							if (defaultSafeOpen)
+								script += ")";
 							StartGo();
 							return;
 						}
 						break;
 				}
+
+				if (i == 0 && current != 'g')
+				{
+					script += "safe(";
+					defaultSafeOpen = true;
+				}
+
 				script += current;
 				position++;
 			}
+
+			if (defaultSafeOpen)
+				script += ")";
 
 			////! May need check if not AtEnd here too!
 			//StartGo();
