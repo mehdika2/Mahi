@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,6 +58,12 @@ namespace Mahi.Settings
 					case "connectionstrings":
 						config.ConnectionStrings = ReadDictionary((YamlMappingNode)entry.Value);
 						break;
+					case "authkey":
+						string hex = entry.Value.ToString();
+						config.AuthKey = Enumerable.Range(0, hex.Length / 2)
+									 .Select(i => Convert.ToByte(hex.Substring(i * 2, 2), 16))
+									 .ToArray();
+						break;
 					case "routes":
 						config.Routes = ReadRouteDictionary((YamlMappingNode)entry.Value);
 						break;
@@ -93,6 +100,13 @@ namespace Mahi.Settings
 				config.ErrorPages = new Dictionary<string, string>();
 			if (config.HttpModules == null)
 				config.HttpModules = new Dictionary<string, string>();
+			if (config.AuthKey == null)
+			{
+				byte[] authKey = new byte[32];
+				Random random = new Random();
+				random.NextBytes(authKey);
+				config.AuthKey = authKey;
+			}
 
 			if (string.IsNullOrEmpty(config.BaseDirectory))
 				config.BaseDirectory = "wwwapp";

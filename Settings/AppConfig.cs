@@ -24,8 +24,9 @@ namespace Mahi.Settings
 		public bool RedirectErrorPage { get; set; }
 		public Dictionary<string, string> ErrorPages { get; internal set; }
 		public Dictionary<string, string> HttpModules { get; internal set; }
+        public byte[] AuthKey { get; set; }
 
-		private static AppConfig _instance;
+        private static AppConfig _instance;
 		private static readonly object _lock = new object();
 		public static AppConfig Instance
 		{
