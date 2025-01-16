@@ -74,7 +74,7 @@ namespace Mahi.LuaCore
             if (expire != null)
                 expireDate = DateTime.Parse(expire);
 
-            response.Cookies.AddCookie(new HttpCookie(name, value, expireDate, path, (SameSiteMode)Enum.Parse(typeof(SameSiteMode), samesite), secure, httpOnly));
+            response.Cookies.AddCookie(new HttpCookie(name, value, path, (SameSiteMode)Enum.Parse(typeof(SameSiteMode), samesite), secure, httpOnly, expireDate));
         }
 
         public void deleteCookie(string name)

@@ -11,11 +11,12 @@ namespace Mahi.Settings
 		public Auth(Dictionary<string, string> dictionary) : base(dictionary) { }
 
 		public string Name => this["Name"];
-		public int Timeout => int.Parse(this["Timeout"]);
+		public int? Timeout => int.Parse(this["Timeout"]);
 		public string Path => this["Path"];
 		public string Key => this["Key"];
 		public string DefaultUrl => this["DefaultUrl"];
 		public string LoginUrl => this["LoginUrl"];
+		public string SameSite => this["SameSite"];
 
 		byte[] keyBytes;
 		public byte[] GetKeyBytes()

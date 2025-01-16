@@ -40,7 +40,6 @@ namespace Mahi.Settings
 			}
 		}
 
-
 		public static void LoadConfigs()
 		{
 			if (!File.Exists(_filename))
