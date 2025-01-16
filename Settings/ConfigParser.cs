@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using YamlDotNet.RepresentationModel;
@@ -58,11 +60,8 @@ namespace Mahi.Settings
 					case "connectionstrings":
 						config.ConnectionStrings = ReadDictionary((YamlMappingNode)entry.Value);
 						break;
-					case "authkey":
-						string hex = entry.Value.ToString();
-						config.AuthKey = Enumerable.Range(0, hex.Length / 2)
-									 .Select(i => Convert.ToByte(hex.Substring(i * 2, 2), 16))
-									 .ToArray();
+					case "auth":
+						config.Auth = new Auth(ReadDictionary((YamlMappingNode)entry.Value));
 						break;
 					case "routes":
 						config.Routes = ReadRouteDictionary((YamlMappingNode)entry.Value);
@@ -100,12 +99,16 @@ namespace Mahi.Settings
 				config.ErrorPages = new Dictionary<string, string>();
 			if (config.HttpModules == null)
 				config.HttpModules = new Dictionary<string, string>();
-			if (config.AuthKey == null)
+			if (config.Auth == null)
 			{
 				byte[] authKey = new byte[32];
 				Random random = new Random();
 				random.NextBytes(authKey);
-				config.AuthKey = authKey;
+				Dictionary<string, string> authData = new Dictionary<string, string>();
+				using (SHA256 sha256 = SHA256.Create())
+					authData.Add("Key", BitConverter.ToString(sha256.ComputeHash(authKey)).Replace("-", ""));
+				var auth = new Auth(authData);
+				config.Auth = auth;
 			}
 
 			if (string.IsNullOrEmpty(config.BaseDirectory))

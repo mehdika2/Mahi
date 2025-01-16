@@ -25,7 +25,13 @@ HttpModules:
 FrobbidenPaths:
   - Errors/*
 
-AuthKey: 'b420c4266590870e8e509595827784f8d6ccc8f7b721b372ceb4af5315b28487'
+Auth:
+    Name: 'myapp_session'
+    Timeout: '60' # one hour
+    Path: '/'
+    Key: 'b420c4266590870e8e509595827784f8d6ccc8f7b721b372ceb4af5315b28487'
+    DefaultUrl: '/'
+    LoginUrl: '/singin'
 
 # Routes
 Routes:
