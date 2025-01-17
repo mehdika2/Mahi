@@ -22,9 +22,9 @@ namespace Mahi.LuaCore
             {
                 var builtInFunctions = new BuiltInFunctions(lua, request, response);
 
-                RegisterBuiltInFunctions(lua, request, response, builtInFunctions);
-
                 string name = '_' + Guid.NewGuid().ToString().Substring(0, 4);
+
+                RegisterBuiltInFunctions(lua, request, response, builtInFunctions);
 
                 object result = lua.DoString($"{name} = false ::start:: if {name} then return else {name} = true end " + script);
 

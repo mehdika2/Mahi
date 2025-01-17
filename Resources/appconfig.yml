@@ -32,6 +32,7 @@ Auth:
     Key: 'b420c4266590870e8e509595827784f8d6ccc8f7b721b372ceb4af5315b28487'
     DefaultUrl: '/'
     LoginUrl: '/singin'
+    RoleManager: 'role_manager.lua'
 
 # Routes
 Routes:

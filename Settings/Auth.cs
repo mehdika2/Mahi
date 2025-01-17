@@ -18,8 +18,9 @@ namespace Mahi.Settings
 		public string DefaultUrl => this["DefaultUrl"];
 		public string LoginUrl => this["LoginUrl"];
 		public string SameSite => this["SameSite"];
+		public string RoleManager => this["RoleManager"];
 
-		public string this[string key]
+        public string this[string key]
 		{
 			get
 			{

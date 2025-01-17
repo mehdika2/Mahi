@@ -81,9 +81,6 @@ namespace Mahi.Settings
                     case "httpmodules":
                         config.HttpModules = ReadDictionary((YamlMappingNode)entry.Value);
                         break;
-                    default:
-                        // Handle unknown properties if necessary
-                        break;
                 }
             }
 

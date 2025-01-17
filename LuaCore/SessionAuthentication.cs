@@ -1,10 +1,12 @@
 ﻿using Fardin;
 using Mahi.Settings;
 using Newtonsoft.Json.Linq;
+using NLua;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,7 +58,11 @@ namespace Mahi.LuaCore
                 Buffer.BlockCopy(key, 0, encryptionKey, 0, 16);
                 Buffer.BlockCopy(key, 16, signingKey, 0, 16);
 
-                byte[] bytes = Convert.FromBase64String(request.Cookies.FirstOrDefault(i => i.Name == (AppConfig.Instance.Auth.Name ?? "Mahi_Auth_Key"))?.Value);
+                string authName = request.Cookies.FirstOrDefault(i => i.Name == (AppConfig.Instance.Auth.Name ?? "Mahi_Auth_Key"))?.Value;
+                if (authName == null)
+                    return null;
+
+                byte[] bytes = Convert.FromBase64String(authName);
                 return DecryptAndVerify(bytes, encryptionKey, signingKey);
             }
         }
@@ -65,13 +71,56 @@ namespace Mahi.LuaCore
         {
             response.Cookies.RemoveCookie(AppConfig.Instance.Auth.Name ?? "Mahi_Auth_Key");
         }
-        public string group()
+
+        public string groupName()
         {
-            return "";
+            string roleManagerFile = AppConfig.Instance.Auth.RoleManager;
+            if (roleManagerFile == null)
+                throw new Exception("No role manager to find group name!");
+
+            if (roleManagerFile.ToLower().EndsWith(".lua"))
+            {
+                using (Lua lua = new Lua())
+                {
+                    lua.DoString(File.ReadAllText(
+                        Path.Combine(Directory.GetCurrentDirectory(), AppConfig.Instance.BaseDirectory, ".modules", roleManagerFile)));
+
+                    var luaFunction = lua["groupName"] as LuaFunction;
+                    if (luaFunction != null)
+                    {
+                        object result = luaFunction.Call(name);
+                        if (result != null && (result as object[]).Length > 0)
+                            return (result as object[])[0].ToString();
+                    }
+                }
+            }
+
+            return null;
         }
 
-        public bool isInGroup(string name)
+        public bool isInGroup(string role)
         {
+            string roleManagerFile = AppConfig.Instance.Auth.RoleManager;
+            if (roleManagerFile == null)
+                throw new Exception("No role manager to find group name!");
+
+            if (roleManagerFile.ToLower().EndsWith(".lua"))
+            {
+                using (Lua lua = new Lua())
+                {
+                    lua.DoString(File.ReadAllText(
+                        Path.Combine(Directory.GetCurrentDirectory(), AppConfig.Instance.BaseDirectory, ".modules", roleManagerFile)));
+
+                    var luaFunction = lua["isInGroup"] as LuaFunction;
+                    if (luaFunction != null)
+                    {
+                        object result = luaFunction.Call(name, role);
+                        if (result != null && (result as object[]).Length > 0)
+                            return (bool)(result as object[])[0];
+                    }
+                }
+            }
+
             return false;
         }
 
@@ -88,11 +137,8 @@ namespace Mahi.LuaCore
                     // اضافه کردن IV به ابتدای داده‌های رمزنگاری‌شده
                     ms.Write(aes.IV, 0, aes.IV.Length);
 
-                    // رمزنگاری داده‌ها
                     using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-                    {
                         cs.Write(data, 0, data.Length);
-                    }
 
                     return ms.ToArray();
                 }
@@ -109,7 +155,6 @@ namespace Mahi.LuaCore
         {
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
 
-            // رمزنگاری داده‌ها
             byte[] encryptedData = EncryptData(dataBytes, encryptionKey);
 
             // امضای داده‌های رمزنگاری‌شده
@@ -139,9 +184,7 @@ namespace Mahi.LuaCore
                 using (var ms = new System.IO.MemoryStream())
                 {
                     using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
-                    {
                         cs.Write(encryptedData, iv.Length, encryptedData.Length - iv.Length);
-                    }
 
                     return ms.ToArray();
                 }
@@ -163,10 +206,9 @@ namespace Mahi.LuaCore
             byte[] computedSignature = SignData(encryptedData, signingKey);
             if (!computedSignature.SequenceEqual(signature))
             {
-                throw new Exception("امضا نامعتبر است! داده‌ها ممکن است تغییر کرده باشند.");
+                throw new Exception("Invalid signiture! data may changed.");
             }
 
-            // رمزگشایی داده‌ها
             byte[] decryptedData = DecryptData(encryptedData, encryptionKey);
             return Encoding.UTF8.GetString(decryptedData);
         }
