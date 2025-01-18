@@ -26,10 +26,7 @@ namespace Mahi.LuaCore
             this.response = response;
         }
 
-        public bool isAuth()
-        {
-            return request.Cookies.Any(i => i.Name == (AppConfig.Instance.Auth.Name ?? "Mahi_Auth_Key"));
-        }
+        public bool isAuth => request.Cookies.Any(i => i.Name == (AppConfig.Instance.Auth.Name ?? "Mahi_Auth_Key"));
 
         public void set(string name, bool keep = false)
         {
@@ -72,7 +69,7 @@ namespace Mahi.LuaCore
             response.Cookies.RemoveCookie(AppConfig.Instance.Auth.Name ?? "Mahi_Auth_Key");
         }
 
-        public string groupName()
+        public string roleName()
         {
             string roleManagerFile = AppConfig.Instance.Auth.RoleManager;
             if (roleManagerFile == null)
@@ -85,7 +82,7 @@ namespace Mahi.LuaCore
                     lua.DoString(File.ReadAllText(
                         Path.Combine(Directory.GetCurrentDirectory(), AppConfig.Instance.BaseDirectory, ".modules", roleManagerFile)));
 
-                    var luaFunction = lua["groupName"] as LuaFunction;
+                    var luaFunction = lua["roleName"] as LuaFunction;
                     if (luaFunction != null)
                     {
                         object result = luaFunction.Call(name);
@@ -98,7 +95,7 @@ namespace Mahi.LuaCore
             return null;
         }
 
-        public bool isInGroup(string role)
+        public bool hasRole(string role)
         {
             string roleManagerFile = AppConfig.Instance.Auth.RoleManager;
             if (roleManagerFile == null)
@@ -111,7 +108,7 @@ namespace Mahi.LuaCore
                     lua.DoString(File.ReadAllText(
                         Path.Combine(Directory.GetCurrentDirectory(), AppConfig.Instance.BaseDirectory, ".modules", roleManagerFile)));
 
-                    var luaFunction = lua["isInGroup"] as LuaFunction;
+                    var luaFunction = lua["hasRole"] as LuaFunction;
                     if (luaFunction != null)
                     {
                         object result = luaFunction.Call(name, role);

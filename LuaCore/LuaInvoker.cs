@@ -132,9 +132,12 @@ namespace Mahi.LuaCore
             lua["appconfig"] = new
             {
                 connectionStrings = ConvertDictionaryToLuaTable(lua, config.ConnectionStrings),
+                baseDirectory = config.BaseDirectory,
+                directoryBrowsing = config.DirectoryBrowsing,
                 defaultPages = ConvertArrayToLuaTable(lua, config.DefaultPages),
                 extentionRequired = config.ExtentionRequired,
                 notExtentionInUrl = config.NotExtentionInUrl,
+                frobiddenPaths = ConvertArrayToLuaTable(lua, config.FrobiddenPaths),
                 errorPages = ConvertDictionaryToLuaTable(lua, config.ErrorPages)
             };
 
