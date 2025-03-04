@@ -1,3 +1,5 @@
+BindHost: 127.0.0.1:1010
+
 BaseDirectory: wwwapp
 
 # List of urls to redirect to if request url was `/`

@@ -13,7 +13,8 @@ namespace Mahi.Settings
         private const string _filename = "appconfig.yml";
         private static FileSystemWatcher _fileWatcher;
 
-        public string BaseDirectory { get; set; }
+		public string BindHost { get; set; }
+		public string BaseDirectory { get; set; }
         public string[] DefaultPages { get; set; }
         public bool DirectoryBrowsing { get; set; }
         public bool ExtentionRequired { get; set; }

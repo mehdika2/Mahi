@@ -41,6 +41,9 @@ namespace Mahi.Settings
 
                 switch (key.ToLowerInvariant())
                 {
+                    case "bindhost":
+                        config.BindHost = entry.Value.ToString();
+                        break;
                     case "basedirectory":
                         config.BaseDirectory = entry.Value.ToString();
                         break;

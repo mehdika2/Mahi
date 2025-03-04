@@ -11,8 +11,6 @@ namespace Mahi
 {
     internal class Program
 	{
-		const string ip = "127.0.0.1";
-		const int port = 1010;
 		static readonly Logger logger = new Logger();
 
 		static void Main()
@@ -30,8 +28,9 @@ namespace Mahi
 			AppConfig.StartConfigWatcher();
 
 			// start server
-			//var server = new HttpServer(IPAddress.Parse(ip), port, "cert.pfx", Resources.CertificationPassword);
-			var server = new HttpServer(IPAddress.Parse(ip), port);
+			string[] bindInfo = AppConfig.Instance.BindHost.Split(':');
+			//var server = new HttpServer(IPAddress.Parse(bindInfo[0]), short.Parse(bindInfo[1]), "cert.pfx", Resources.CertificationPassword);
+			var server = new HttpServer(IPAddress.Parse(bindInfo[0]), short.Parse(bindInfo[1]));
 			server.BaseDirectory = AppConfig.Instance.BaseDirectory;
 
 			try
@@ -45,7 +44,7 @@ namespace Mahi
 			}
 
 			logger.Log("[&2Info&r] &fStarting server ...");
-			logger.Log($"[&2Info&r] &fServer started and binded on &7http{(server.IsTlsSecure ? "s" : "")}://{ip}:{port}/");
+			logger.Log($"[&2Info&r] &fServer started and binded on &7http{(server.IsTlsSecure ? "s" : "")}://{bindInfo[0]}:{bindInfo[1]}/");
 
 			RequestHandler.Process(server);
 
