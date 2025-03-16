@@ -1,4 +1,5 @@
-﻿using Mahi.Properties;
+﻿using Mahi.Logger;
+using Mahi.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace Mahi.Settings
                 }
                 catch (Exception ex)
                 {
-                    Program.Log("&r[&4Error&r] Faild to reload config file: " + ex.Message);
+					Program.Logger.Log("&r[&4Error&r] Faild to reload config file: " + ex.Message);
                 }
             }
         }

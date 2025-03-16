@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 using Fardin;
-using NLua;
 using Mahi.HtmLua;
 using Mahi.Properties;
 using NLua.Exceptions;
 using Mahi.Settings;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Mahi.LuaCore;
+using Mahi.Logger;
+using System.Runtime.CompilerServices;
 
 namespace Mahi.Core
 {
     internal static class RequestHandler
     {
-        public static void Process(HttpServer server)
+        static ServerLogger _logger;
+
+        public static void Process(HttpServer server, ServerLogger logger)
         {
+			_logger = logger;
             while (true)
                 try
                 {
@@ -107,7 +105,7 @@ namespace Mahi.Core
                     log += "&1? ";
                     break;
             }
-            Program.Log(log += request.Method + " &r" + request.Uri.LocalPath);
+			_logger.Log(log += request.Method + " &r" + request.Uri.LocalPath);
 
             // Detect irectory paths
             var config = AppConfig.Instance;
@@ -268,7 +266,7 @@ namespace Mahi.Core
 
             File.WriteAllText(Path.Combine(errorPath, DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss_fffffff") + ".txt"), ex.ToString());
 
-            Program.Log("&r[&4Error&r] " + ex.Message);
+			_logger.Log("&r[&4Error&r] " + ex.Message);
 
             LastError = ex;
         }

@@ -1,21 +1,25 @@
 ﻿using System.Net;
-using System.Text;
 
 using Fardin;
-using Mahi.Properties;
 using Mahi.Core;
-
+using Mahi.Logger;
 using Mahi.Settings;
 
 namespace Mahi
 {
-    internal class Program
+	internal class Program
 	{
-		static readonly Logger logger = new Logger();
+		static readonly ServerLogger logger = new ServerLogger();
+		static readonly StandardOutputLogger stdLogger = new StandardOutputLogger(logger);
+
+		public static ServerLogger Logger => logger;
 
 		static void Main()
 		{
 			Console.Title = "Mahi 1.0";
+
+			// set standard output logger
+			Console.SetOut(stdLogger);
 
 			// true means that created a template successfully
 			if (Templates.Template.CreateFromArguments())
@@ -46,12 +50,9 @@ namespace Mahi
 			logger.Log("[&2Info&r] &fStarting server ...");
 			logger.Log($"[&2Info&r] &fServer started and binded on &7http{(server.IsTlsSecure ? "s" : "")}://{bindInfo[0]}:{bindInfo[1]}/");
 
-			RequestHandler.Process(server);
+			RequestHandler.Process(server, logger);
 
 			logger.Dispose();
 		}
-
-		internal static void Log(string message, bool newLine = true)
-			=> logger.Log(message, newLine);
 	}
 }

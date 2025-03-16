@@ -11,137 +11,170 @@ using System.Collections.Specialized;
 using Mahi.Settings;
 using System.IO;
 using Mahi.Core;
+using System.Reflection;
 
 namespace Mahi.LuaCore
 {
-    public static class LuaInvoker
-    {
-        public static object Run(string script, HttpRequest request, HttpResponse response)
-        {
-            using (var lua = new Lua())
-            {
-                var builtInFunctions = new BuiltInFunctions(lua, request, response);
+	public static class LuaInvoker
+	{
+		static List<BuiltInFunction> registredFunctions = new List<BuiltInFunction>();
 
-                string name = '_' + Guid.NewGuid().ToString().Substring(0, 4);
+		public static object Run(string script, HttpRequest request, HttpResponse response)
+		{
+			using (var lua = new Lua())
+			{
+				var builtInFunctions = new BuiltInFunctions(lua, request, response);
 
-                RegisterBuiltInFunctions(lua, request, response, builtInFunctions);
+				string name = '_' + Guid.NewGuid().ToString().Substring(0, 4);
 
-                object result = lua.DoString($"{name} = false ::start:: if {name} then return else {name} = true end " + script);
+				RegisterBuiltInFunctions(lua, request, response, builtInFunctions);
 
-                response.ResponseStream.Write(Encoding.UTF8.GetBytes(builtInFunctions._html));
+				object result = lua.DoString($"{name} = false ::start:: if {name} then return else {name} = true end " + script);
 
-                return result;
-            }
-        }
+				response.ResponseStream.Write(Encoding.UTF8.GetBytes(builtInFunctions._html));
 
-        public static LuaTable ConvertArrayToLuaTable(Lua lua, object[] array)
-        {
-            var table = lua.DoString("return {}")[0] as LuaTable;
+				return result;
+			}
+		}
 
-            for (int i = 0; i < array.Length; i++)
-                table[i + 1] = array[i]; // Shift index to 1-based
+		public static LuaTable ConvertArrayToLuaTable(Lua lua, object[] array)
+		{
+			var table = lua.DoString("return {}")[0] as LuaTable;
 
-            return table;
-        }
+			for (int i = 0; i < array.Length; i++)
+				table[i + 1] = array[i]; // Shift index to 1-based
 
-        public static LuaTable ConvertDictionaryToLuaTable(Lua lua, Dictionary<string, string> dictionary)
-        {
-            var table = lua.DoString("return {}")[0] as LuaTable;
+			return table;
+		}
 
-            if (dictionary == null)
-                return table;
+		public static LuaTable ConvertDictionaryToLuaTable(Lua lua, Dictionary<string, string> dictionary)
+		{
+			var table = lua.DoString("return {}")[0] as LuaTable;
 
-            foreach (var kvp in dictionary)
-                table[kvp.Key.Replace('.', '_')] = kvp.Value;
+			if (dictionary == null)
+				return table;
 
-            return table;
-        }
+			foreach (var kvp in dictionary)
+				table[kvp.Key.Replace('.', '_')] = kvp.Value;
 
-        public static LuaTable ConvertNameValueCollectionToLuaTable(Lua lua, NameValueCollection collection)
-        {
-            var table = lua.DoString("return {}")[0] as LuaTable;
+			return table;
+		}
 
-            if (collection == null)
-                return table;
+		public static LuaTable ConvertNameValueCollectionToLuaTable(Lua lua, NameValueCollection collection)
+		{
+			var table = lua.DoString("return {}")[0] as LuaTable;
 
-            foreach (var key in collection.AllKeys)
-                table[key] = collection[key];
+			if (collection == null)
+				return table;
 
-            return table;
-        }
+			foreach (var key in collection.AllKeys)
+				table[key] = collection[key];
 
-        static void RegisterBuiltInFunctions(Lua lua, HttpRequest request, HttpResponse response, BuiltInFunctions builtInFunctions)
-        {
-            SessionAuthentication session = new SessionAuthentication(request, response);
+			return table;
+		}
 
-            lua.State.Encoding = Encoding.UTF8;
+		public static void RegisterBuitlInFunction(BuiltInFunction function)
+		{
+			registredFunctions.Add(function);
+		}
 
-            // register html helpers
-            lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
-            lua.RegisterFunction("safe", builtInFunctions, typeof(BuiltInFunctions).GetMethod("safe"));
+		static void RegisterBuiltInFunctions(Lua lua, HttpRequest request, HttpResponse response, BuiltInFunctions builtInFunctions)
+		{
+			SessionAuthentication session = new SessionAuthentication(request, response);
 
-            // temp & request data
-            lua.RegisterFunction("setTemp", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setTemp"));
-            lua.RegisterFunction("getTemp", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getTemp"));
-            lua.RegisterFunction("setItem", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setItem"));
-            lua.RegisterFunction("getItem", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getItem"));
+			lua.State.Encoding = Encoding.UTF8;
 
-            // register response helpers
-            lua.RegisterFunction("log", builtInFunctions, typeof(BuiltInFunctions).GetMethod("log"));
-            lua.RegisterFunction("setStatus", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setStatus"));
-            lua.RegisterFunction("redirect", builtInFunctions, typeof(BuiltInFunctions).GetMethod("redirect"));
-            lua.RegisterFunction("addHeader", builtInFunctions, typeof(BuiltInFunctions).GetMethod("addHeader"));
-            lua.RegisterFunction("setCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setCookie"));
-            lua.RegisterFunction("deleteCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("deleteCookie"));
-            lua.RegisterFunction("isNullOrEmpty", builtInFunctions, typeof(BuiltInFunctions).GetMethod("isNullOrEmpty"));
-            lua.RegisterFunction("getError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getError"));
-            lua.RegisterFunction("clearError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("clearError"));
-            lua.RegisterFunction("match", builtInFunctions, typeof(BuiltInFunctions).GetMethod("match"));
-            lua.RegisterFunction("matches", builtInFunctions, typeof(BuiltInFunctions).GetMethod("matches"));
+			// register html helpers
+			lua.RegisterFunction("go", builtInFunctions, typeof(BuiltInFunctions).GetMethod("go"));
+			lua.RegisterFunction("safe", builtInFunctions, typeof(BuiltInFunctions).GetMethod("safe"));
 
-            // register encoding functions
-            lua.RegisterFunction("base64_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_decode"));
-            lua.RegisterFunction("base64_encode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_encode"));
-            lua.RegisterFunction("utf_encode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_encode"));
-            lua.RegisterFunction("utf_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_decode"));
+			// temp & request data
+			lua.RegisterFunction("setTemp", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setTemp"));
+			lua.RegisterFunction("getTemp", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getTemp"));
+			lua.RegisterFunction("setItem", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setItem"));
+			lua.RegisterFunction("getItem", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getItem"));
 
-            // contains key built in function
-            lua.DoString("function containsKey(table, key) return table[key] ~= nil end " +
-                $"package.path = \"{Path.GetFullPath(AppConfig.Instance.BaseDirectory).Replace("\\", "\\\\")}\\\\.libraries\\\\?.lua\"");
+			// register response helpers
+			lua.RegisterFunction("log", builtInFunctions, typeof(BuiltInFunctions).GetMethod("log"));
+			lua.RegisterFunction("setStatus", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setStatus"));
+			lua.RegisterFunction("redirect", builtInFunctions, typeof(BuiltInFunctions).GetMethod("redirect"));
+			lua.RegisterFunction("addHeader", builtInFunctions, typeof(BuiltInFunctions).GetMethod("addHeader"));
+			lua.RegisterFunction("setCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("setCookie"));
+			lua.RegisterFunction("deleteCookie", builtInFunctions, typeof(BuiltInFunctions).GetMethod("deleteCookie"));
+			lua.RegisterFunction("isNullOrEmpty", builtInFunctions, typeof(BuiltInFunctions).GetMethod("isNullOrEmpty"));
+			lua.RegisterFunction("getError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("getError"));
+			lua.RegisterFunction("clearError", builtInFunctions, typeof(BuiltInFunctions).GetMethod("clearError"));
+			lua.RegisterFunction("match", builtInFunctions, typeof(BuiltInFunctions).GetMethod("match"));
+			lua.RegisterFunction("matches", builtInFunctions, typeof(BuiltInFunctions).GetMethod("matches"));
 
-            lua["request"] = new
-            {
-                method = request.Method,
-                uri = request.Uri,
-                httpVersion = request.HttpVersion,
-                headers = ConvertDictionaryToLuaTable(lua, request.Headers.ToDictionary(i => i.Name, i => i.Value)),
-                cookies = ConvertDictionaryToLuaTable(lua, request.Cookies.ToDictionary(i => i.Name, i => i.Value)),
-                post = ConvertNameValueCollectionToLuaTable(lua, request.RequestParameters),
-                get = ConvertNameValueCollectionToLuaTable(lua, request.UrlParameters),
-                isMultipartRequest = request.IsMultipartRequest,
-                content = request.Content,
-                items = request.Items,
-                userAddress = request.Items["R_IP_ADDRESS"],
-                userPort = request.Items["R_IP_PORT"],
-            };
+			// register encoding functions
+			lua.RegisterFunction("base64_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_decode"));
+			lua.RegisterFunction("base64_encode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("base64_encode"));
+			lua.RegisterFunction("utf_encode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_encode"));
+			lua.RegisterFunction("utf_decode", builtInFunctions, typeof(BuiltInFunctions).GetMethod("utf_decode"));
 
-            lua["response"] = new ResponseContext(lua, response);
+			foreach (var function in registredFunctions)
+				if (function.Target == null)
+					lua.RegisterFunction(function.Name, function.MethodInfo);
+				else lua.RegisterFunction(function.Name, function.Target, function.MethodInfo);
 
-            var config = AppConfig.Instance;
+			// contains key built in function
+			lua.DoString("function containsKey(table, key) return table[key] ~= nil end " +
+				$"package.path = \"{Path.GetFullPath(AppConfig.Instance.BaseDirectory).Replace("\\", "\\\\")}\\\\.libraries\\\\?.lua\"");
 
-            lua["appconfig"] = new
-            {
-                connectionStrings = ConvertDictionaryToLuaTable(lua, config.ConnectionStrings),
-                baseDirectory = config.BaseDirectory,
-                directoryBrowsing = config.DirectoryBrowsing,
-                defaultPages = ConvertArrayToLuaTable(lua, config.DefaultPages),
-                extentionRequired = config.ExtentionRequired,
-                notExtentionInUrl = config.NotExtentionInUrl,
-                frobiddenPaths = ConvertArrayToLuaTable(lua, config.FrobiddenPaths),
-                errorPages = ConvertDictionaryToLuaTable(lua, config.ErrorPages)
-            };
+			lua["request"] = new
+			{
+				method = request.Method,
+				uri = request.Uri,
+				httpVersion = request.HttpVersion,
+				headers = ConvertDictionaryToLuaTable(lua, request.Headers.ToDictionary(i => i.Name, i => i.Value)),
+				cookies = ConvertDictionaryToLuaTable(lua, request.Cookies.ToDictionary(i => i.Name, i => i.Value)),
+				post = ConvertNameValueCollectionToLuaTable(lua, request.RequestParameters),
+				get = ConvertNameValueCollectionToLuaTable(lua, request.UrlParameters),
+				isMultipartRequest = request.IsMultipartRequest,
+				content = request.Content,
+				items = request.Items,
+				userAddress = request.Items["R_IP_ADDRESS"],
+				userPort = request.Items["R_IP_PORT"],
+			};
 
-            lua["session"] = session;
-        }
-    }
+			lua["response"] = new ResponseContext(lua, response);
+
+			var config = AppConfig.Instance;
+
+			lua["appconfig"] = new
+			{
+				connectionStrings = ConvertDictionaryToLuaTable(lua, config.ConnectionStrings),
+				baseDirectory = config.BaseDirectory,
+				directoryBrowsing = config.DirectoryBrowsing,
+				defaultPages = ConvertArrayToLuaTable(lua, config.DefaultPages),
+				extentionRequired = config.ExtentionRequired,
+				notExtentionInUrl = config.NotExtentionInUrl,
+				frobiddenPaths = ConvertArrayToLuaTable(lua, config.FrobiddenPaths),
+				errorPages = ConvertDictionaryToLuaTable(lua, config.ErrorPages)
+			};
+
+			lua["session"] = session;
+		}
+	}
+
+	public class BuiltInFunction
+	{
+		public BuiltInFunction(string name, MethodInfo methodInfo)
+		{
+			Name = name;
+			MethodInfo = methodInfo;
+		}
+
+		public BuiltInFunction(string name, object target, MethodInfo methodInfo)
+		{
+			Name = name;
+			Target = target;
+			MethodInfo = methodInfo;
+		}
+
+		public string Name { get; set; }
+		public object Target { get; set; }
+		public MethodInfo MethodInfo { get; set; }
+	}
 }

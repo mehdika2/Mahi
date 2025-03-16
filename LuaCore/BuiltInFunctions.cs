@@ -1,22 +1,10 @@
 ﻿using Fardin;
 using Mahi.Core;
-using Mahi.Settings;
 using Microsoft.Data.Sqlite;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NLua;
-using NLua.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Dynamic;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Mahi.LuaCore
 {
@@ -46,7 +34,7 @@ namespace Mahi.LuaCore
 
         public void log(string text)
         {
-            Program.Log(text);
+            Program.Logger.Log(text);
         }
 
         public void setStatus(int status, string text = null)
