@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mahi.Settings
 {
-	public class Route
+	internal class Route
 	{
 		public string Type { get; set; }
 		public string Url { get; set; }

@@ -24,9 +24,18 @@ namespace Mahi
 			// true means that created a template successfully
 			if (Templates.Template.CreateFromArguments())
 				return;
-			
+
 			// load settings
-			AppConfig.LoadConfigs();
+			try
+			{
+				AppConfig.LoadConfigs();
+			}
+			catch (FileNotFoundException) {
+				Console.WriteLine("Config file not found!");
+				Console.WriteLine("Closing");
+				Environment.ExitCode = 1;
+				return;
+			}
 
 			// watch appconfig.yaml
 			AppConfig.StartConfigWatcher();

@@ -2,7 +2,7 @@
 
 namespace Mahi.Logger
 {
-	public class StandardOutputLogger : TextWriter
+	internal class StandardOutputLogger : TextWriter
 	{
 		private readonly ServerLogger _logger;
 

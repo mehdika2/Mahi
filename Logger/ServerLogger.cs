@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Mahi.Logger
 {
-	public class ServerLogger
+	internal class ServerLogger
 	{
 		private readonly Stream consoleOutputStream;
 		private readonly StreamWriter outputWriter;

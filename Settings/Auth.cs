@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mahi.Settings
 {
-	public class Auth : Dictionary<string, string>
+	internal class Auth : Dictionary<string, string>
 	{
 		public Auth(Dictionary<string, string> dictionary, IEqualityComparer<string> comparer) : base(dictionary, comparer) {  }
 

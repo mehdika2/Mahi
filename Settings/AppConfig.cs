@@ -1,15 +1,6 @@
-﻿using Mahi.Logger;
-using Mahi.Properties;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YamlDotNet.Serialization;
-
-namespace Mahi.Settings
+﻿namespace Mahi.Settings
 {
-    public class AppConfig
+    internal class AppConfig
     {
         private const string _filename = "appconfig.yml";
         private static FileSystemWatcher _fileWatcher;

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography;
 using YamlDotNet.RepresentationModel;
 
 namespace Mahi.Settings
 {
-    public class ConfigParser
+    internal class ConfigParser
     {
         public static AppConfig ParseYaml(string yamlContent)
         {
