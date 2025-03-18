@@ -1,17 +1,8 @@
 ﻿using Fardin;
 using Mahi.Settings;
-using Newtonsoft.Json.Linq;
 using NLua;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using YamlDotNet.Core.Tokens;
 
 namespace Mahi.LuaCore
 {
@@ -129,7 +120,7 @@ namespace Mahi.LuaCore
                 aes.GenerateIV(); // تولید یک IV تصادفی
 
                 using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
-                using (var ms = new System.IO.MemoryStream())
+                using (var ms = new MemoryStream())
                 {
                     // اضافه کردن IV به ابتدای داده‌های رمزنگاری‌شده
                     ms.Write(aes.IV, 0, aes.IV.Length);

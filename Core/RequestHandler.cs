@@ -9,7 +9,6 @@ using Mahi.Settings;
 using System.Text.RegularExpressions;
 using Mahi.LuaCore;
 using Mahi.Logger;
-using System.Runtime.CompilerServices;
 
 namespace Mahi.Core
 {

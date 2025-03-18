@@ -41,7 +41,7 @@ Routes:
   Admin:
     Type: Regex
     Url: '/admin*'
-    Redirect: '/manage/admin-manager.htmlua'
+    Route: '/manage/admin-manager.htmlua'
     
   Default:
     Type: Static

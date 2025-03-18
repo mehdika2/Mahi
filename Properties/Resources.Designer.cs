@@ -22,21 +22,21 @@ namespace Mahi.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+		public Resources() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+		public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Mahi.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace Mahi.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+		public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -59,136 +59,136 @@ namespace Mahi.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 123456789.
-        /// </summary>
-        internal static string CertificationPassword {
+
+		/// <summary>
+		///   Looks up a localized string similar to 123456789.
+		/// </summary>
+		public static string CertificationPassword {
             get {
                 return ResourceManager.GetString("CertificationPassword", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;!DOCTYPE HTML&gt;
-        ///&lt;html&gt;
-        ///&lt;head&gt;
-        ///  &lt;title&gt;Directory {Directory}&lt;/title&gt;
-        ///  &lt;style&gt;
-        ///    table {
-        ///      border-collapse: collapse;
-        ///    }
-        ///    td:not(:first-child) {
-        ///      padding-left: 1rem;
-        ///      padding-right: 1rem;
-        ///    }
-        ///    th {
-        ///      background-color: #f2f2f2;
-        ///      text-align: left;
-        ///      padding-left: 1rem;
-        ///      padding-right: 1rem;
-        ///      border-bottom: 2px solid gray;
-        ///    }
-        ///    th,
-        ///    td {
-        ///      border: 1px solid #ddd;
-        ///      padding: 8px;
-        ///      text-align: left;
-        ///    }
-        ///  &lt;/style&gt;
-        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string DirectoryBrowsing {
+
+		/// <summary>
+		///   Looks up a localized string similar to &lt;!DOCTYPE HTML&gt;
+		///&lt;html&gt;
+		///&lt;head&gt;
+		///  &lt;title&gt;Directory {Directory}&lt;/title&gt;
+		///  &lt;style&gt;
+		///    table {
+		///      border-collapse: collapse;
+		///    }
+		///    td:not(:first-child) {
+		///      padding-left: 1rem;
+		///      padding-right: 1rem;
+		///    }
+		///    th {
+		///      background-color: #f2f2f2;
+		///      text-align: left;
+		///      padding-left: 1rem;
+		///      padding-right: 1rem;
+		///      border-bottom: 2px solid gray;
+		///    }
+		///    th,
+		///    td {
+		///      border: 1px solid #ddd;
+		///      padding: 8px;
+		///      text-align: left;
+		///    }
+		///  &lt;/style&gt;
+		/// [rest of string was truncated]&quot;;.
+		/// </summary>
+		public static string DirectoryBrowsing {
             get {
                 return ResourceManager.GetString("DirectoryBrowsing", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;tr&gt;
-        ///        &lt;td&gt;&lt;img src=&quot;/icons/back.gif&quot; alt=&quot;[BACK]&quot;&gt;&lt;/td&gt;
-        ///        &lt;td&gt;&lt;a href=&quot;{ParentDirectory}&quot;&gt;Parent Directory&lt;/a&gt;&lt;/td&gt;
-        ///        &lt;td&gt;-&lt;/td&gt;
-        ///        &lt;td&gt;-&lt;/td&gt;
-        ///      &lt;/tr&gt;.
-        /// </summary>
-        internal static string DirectoryBrowsingParentDirectory {
+
+		/// <summary>
+		///   Looks up a localized string similar to &lt;tr&gt;
+		///        &lt;td&gt;&lt;img src=&quot;/icons/back.gif&quot; alt=&quot;[BACK]&quot;&gt;&lt;/td&gt;
+		///        &lt;td&gt;&lt;a href=&quot;{ParentDirectory}&quot;&gt;Parent Directory&lt;/a&gt;&lt;/td&gt;
+		///        &lt;td&gt;-&lt;/td&gt;
+		///        &lt;td&gt;-&lt;/td&gt;
+		///      &lt;/tr&gt;.
+		/// </summary>
+		public static string DirectoryBrowsingParentDirectory {
             get {
                 return ResourceManager.GetString("DirectoryBrowsingParentDirectory", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No template found with name {0}.
-        /// </summary>
-        internal static string Error_CreateTemplateNameNotFound {
+
+		/// <summary>
+		///   Looks up a localized string similar to No template found with name {0}.
+		/// </summary>
+		public static string Error_CreateTemplateNameNotFound {
             get {
                 return ResourceManager.GetString("Error_CreateTemplateNameNotFound", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You should give a template name after -t
-        ///  To see available templates enter -t -l.
-        /// </summary>
-        internal static string Error_CreateTemplateNameRequired {
+
+		/// <summary>
+		///   Looks up a localized string similar to You should give a template name after -t
+		///  To see available templates enter -t -l.
+		/// </summary>
+		public static string Error_CreateTemplateNameRequired {
             get {
                 return ResourceManager.GetString("Error_CreateTemplateNameRequired", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Currently there&apos;s template files exists, to force override on existing file put -f options after template name.
-        /// </summary>
-        internal static string Error_CreateTemplateNeedToForce {
+
+		/// <summary>
+		///   Looks up a localized string similar to Currently there&apos;s template files exists, to force override on existing file put -f options after template name.
+		/// </summary>
+		public static string Error_CreateTemplateNeedToForce {
             get {
                 return ResourceManager.GetString("Error_CreateTemplateNeedToForce", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
-        ///&lt;html lang=&quot;en&quot; dir=&quot;lrt&quot;&gt;
-        ///&lt;head&gt;
-        ///    &lt;meta charset=&quot;UTF-8&quot;&gt;
-        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-        ///    &lt;title&gt;Not found&lt;/title&gt;
-        ///    &lt;style&gt;
-        ///        body {
-        ///            text-align: center;
-        ///        }
-        ///
-        ///        h1 {
-        ///            color:rgb(107, 18, 190)
-        ///        }
-        ///    &lt;/style&gt;
-        ///&lt;/head&gt;
-        ///&lt;body&gt;
-        ///    &lt;h1&gt;Error: The request url &quot;{Url}&quot; was not found!&lt;/h1&gt;
-        ///    &lt;hr&gt;
-        ///    &lt;p class=&quot;exception-message&quot;&gt;&lt;span style=&quot;font-weight: bold&quot;&gt;Description:&lt;/span&gt; {D [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Http404 {
+
+		/// <summary>
+		///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+		///&lt;html lang=&quot;en&quot; dir=&quot;lrt&quot;&gt;
+		///&lt;head&gt;
+		///    &lt;meta charset=&quot;UTF-8&quot;&gt;
+		///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+		///    &lt;title&gt;Not found&lt;/title&gt;
+		///    &lt;style&gt;
+		///        body {
+		///            text-align: center;
+		///        }
+		///
+		///        h1 {
+		///            color:rgb(107, 18, 190)
+		///        }
+		///    &lt;/style&gt;
+		///&lt;/head&gt;
+		///&lt;body&gt;
+		///    &lt;h1&gt;Error: The request url &quot;{Url}&quot; was not found!&lt;/h1&gt;
+		///    &lt;hr&gt;
+		///    &lt;p class=&quot;exception-message&quot;&gt;&lt;span style=&quot;font-weight: bold&quot;&gt;Description:&lt;/span&gt; {D [rest of string was truncated]&quot;;.
+		/// </summary>
+		public static string Http404 {
             get {
                 return ResourceManager.GetString("Http404", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
-        ///&lt;html lang=&quot;en&quot; dir=&quot;lrt&quot;&gt;
-        ///&lt;head&gt;
-        ///    &lt;meta charset=&quot;UTF-8&quot;&gt;
-        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-        ///    &lt;title&gt;{Error}&lt;/title&gt;
-        ///    &lt;style&gt;
-        ///        body,html{height:100%}h1{color:red;margin-top:1rem;margin-bottom:0.5rem;font-size:2.5rem}p{font-size:18px}.exception-type{margin-top:0}.exception-message{font-size:1.5rem}pre{background-color:#ffb;border:1px solid #f99;font-size:18px;padding:1.5rem 1rem}
-        ///    &lt;/style&gt;
-        ///&lt;/head&gt;
-        ///&lt;body&gt;
-        ///    &lt;h1&gt;{Error}&lt;/h1 [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Http500 {
+
+		/// <summary>
+		///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+		///&lt;html lang=&quot;en&quot; dir=&quot;lrt&quot;&gt;
+		///&lt;head&gt;
+		///    &lt;meta charset=&quot;UTF-8&quot;&gt;
+		///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+		///    &lt;title&gt;{Error}&lt;/title&gt;
+		///    &lt;style&gt;
+		///        body,html{height:100%}h1{color:red;margin-top:1rem;margin-bottom:0.5rem;font-size:2.5rem}p{font-size:18px}.exception-type{margin-top:0}.exception-message{font-size:1.5rem}pre{background-color:#ffb;border:1px solid #f99;font-size:18px;padding:1.5rem 1rem}
+		///    &lt;/style&gt;
+		///&lt;/head&gt;
+		///&lt;body&gt;
+		///    &lt;h1&gt;{Error}&lt;/h1 [rest of string was truncated]&quot;;.
+		/// </summary>
+		public static string Http500 {
             get {
                 return ResourceManager.GetString("Http500", resourceCulture);
             }
@@ -197,7 +197,7 @@ namespace Mahi.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Template create successfully..
         /// </summary>
-        internal static string Message_CreateTemplateSuccess {
+        public static string Message_CreateTemplateSuccess {
             get {
                 return ResourceManager.GetString("Message_CreateTemplateSuccess", resourceCulture);
             }
@@ -206,7 +206,7 @@ namespace Mahi.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 1.
         /// </summary>
-        internal static string Version {
+        public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
             }
